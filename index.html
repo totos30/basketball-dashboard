@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Dashboard Basketball - Analyse Coach</title>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.9.1/chart.min.js"></script>
+    <script src="https://apis.google.com/js/api.js"></script>
     <style>
         * {
             margin: 0;
@@ -12,24 +13,19 @@
             box-sizing: border-box;
         }
 
+        @keyframes gradientShift {
+            0%, 100% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+        }
+
         body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            /*background: linear-gradient(135deg, #ffffff 0%, #d5d5d5 100%);*/
-			
-			/*background: radial-gradient(circle, #e63946, #457b9d, #1d3557, #1d3557, #457b9d, #e63946);
-			background-size: 2000% 2000%;
-			animation: gradientShift 200s ease infinite;
-			background-position: center;*/
-			
-			
-			background: radial-gradient(circle, #ffffff, #414141, #000000);
+			/*background: radial-gradient(circle, #ffffff, #414141, #000000);*/
+			background: #dfdfdf;
 			background-size: 1000% 1000%;
-			animation: gradientShift 5s 
-			ease-in-out infinite;
+			animation: gradientShift 5s ease-in-out infinite;
 			background-position: center;
-			
 			margin: 0;
-			
             min-height: 100vh;
             color: #333;
         }
@@ -48,6 +44,7 @@
             margin-bottom: 20px;
             box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
             border: 1px solid rgba(255, 255, 255, 0.2);
+            position: relative;
         }
 
         .header h1 {
@@ -61,9 +58,162 @@
         }
 
         .header .subtitle {
-            color: #000000;
+            color: #7f8c8d;
             font-size: 1.1rem;
             font-weight: 400;
+        }
+
+        /* Bouton Paramètres dans le header */
+        .settings-btn {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+			/*background: linear-gradient(135deg, #667eea, #764ba2);*/
+            background: #764ba2;
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3);
+        }
+
+        .settings-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(102, 126, 234, 0.4);
+        }
+
+        /* Section Paramètres */
+        .settings-section {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border-radius: 5px;
+            padding: 25px;
+            margin-bottom: 20px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            transition: all 0.3s ease-in-out;
+            overflow: hidden;
+        }
+
+        .settings-section.hidden {
+            max-height: 0;
+            padding: 0;
+            margin-bottom: 0;
+            opacity: 0;
+            display: none;
+        }
+
+        .settings-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 30px;
+            margin-top: 20px;
+        }
+
+        .settings-panel {
+            background: white;
+            padding: 20px;
+            border-left: 4px solid #3498db;
+        }
+
+        .settings-panel h3 {
+            margin: 0 0 15px 0;
+            color: #2c3e50;
+            font-size: 1.2rem;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #3498db, #2980b9);
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            margin-right: 10px;
+            margin-bottom: 10px;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(52, 152, 219, 0.3);
+        }
+
+        .btn-secondary {
+            background: linear-gradient(135deg, #9b59b6, #8e44ad);
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            margin-bottom: 10px;
+        }
+
+        .btn-secondary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(155, 89, 182, 0.3);
+        }
+
+        .connection-option {
+            margin-bottom: 15px;
+        }
+
+        .connection-option label {
+            display: block;
+            font-weight: 600;
+            color: #34495e;
+            margin-bottom: 8px;
+        }
+
+        .connection-option select,
+        .connection-option input[type="text"],
+        .connection-option input[type="file"] {
+            width: 100%;
+            padding: 10px;
+            border: 2px solid #e8e8e8;
+            border-radius: 5px;
+            font-size: 14px;
+            transition: all 0.3s ease;
+        }
+
+        .connection-option select:focus,
+        .connection-option input:focus {
+            border-color: #3498db;
+            outline: none;
+            box-shadow: 0 0 0 3px rgba(52, 152, 219, 0.2);
+        }
+
+        .connection-details {
+            margin-top: 15px;
+            padding: 15px;
+            background: #f8f9fa;
+            border-radius: 5px;
+            display: none;
+        }
+
+        .connection-details.visible {
+            display: block;
         }
 
         .filters-section {
@@ -84,6 +234,21 @@
             color: #2c3e50;
             font-size: 1.3rem;
             font-weight: 600;
+        }
+
+        #businessRulesContent {
+            transition: max-height 0.3s ease-in-out, opacity 0.3s ease-in-out;
+            overflow: hidden;
+        }
+
+        #toggleBusinessRulesBtn {
+            transition: all 0.2s ease;
+        }
+
+        #toggleBusinessRulesBtn:hover {
+            background: #2980b9 !important;
+            transform: translateY(-1px);
+            box-shadow: 0 4px 8px rgba(0,0,0,0.2);
         }
 
         .filters-grid {
@@ -148,7 +313,6 @@
         .checkbox-item.active {
             background: #3498db;
             color: white;
-            /*border-color: #2980b9;*/
 			box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
         }
 
@@ -170,7 +334,6 @@
             padding: 25px;
             text-align: center;
             box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
-            /*border: 1px solid rgba(255, 255, 255, 0.2);*/
             transition: transform 0.3s ease, box-shadow 0.3s ease;
         }
 
@@ -214,6 +377,10 @@
             margin-bottom: 30px;
         }
 
+		.charts-section.full-width {
+			grid-template-columns: 1fr;
+		}
+
         .chart-container {
             background: rgba(255, 255, 255, 0.95);
             backdrop-filter: blur(10px);
@@ -221,11 +388,11 @@
             padding: 25px;
             box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
             border: 1px solid rgba(255, 255, 255, 0.2);
-            height: 400px; /* Hauteur fixe */
+            height: 400px;
         }
 
         .chart-container canvas {
-            max-height: 320px !important; /* Hauteur fixe pour les canvas */
+            max-height: 320px !important;
         }
 
         .chart-title {
@@ -247,6 +414,54 @@
             border: 1px solid rgba(255, 255, 255, 0.2);
         }
 
+        .stats-filter-container {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-top: 15px;
+            padding: 15px;
+            background: rgba(255, 255, 255, 0.7);
+            border-radius: 8px;
+            border: 1px solid rgba(52, 152, 219, 0.2);
+        }
+
+        .stat-filter-btn {
+            /*padding: 8px 16px;
+            background: #e9ecef;
+            color: #7f8c8d;
+            border: 2px solid #dee2e6;
+            border-radius: 20px;
+            cursor: pointer;
+            font-size: 0.9rem;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            text-transform: capitalize;*/
+			
+			display: flex;
+            align-items: center;
+            gap: 8px;
+            background: #f8f9fa;
+            padding: 8px 12px;
+            border-radius: 5px;
+            font-size: 13px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            border: 2px solid transparent;
+			
+        }
+
+        .stat-filter-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        .stat-filter-btn.active {
+            background: linear-gradient(135deg, #3498db, #2980b9);
+            color: white;
+            border-color: #3498db;
+            box-shadow: 0 4px 12px rgba(52, 152, 219, 0.3);
+        }
+
         .players-grid {
             display: grid;
             grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
@@ -256,7 +471,6 @@
 
         .player-card {
             background: linear-gradient(135deg, #f8f9fa, #e9ecef);
-            border-radius: 5px;
             padding: 20px;
             border-left: 5px solid #3498db;
             transition: all 0.3s ease;
@@ -326,13 +540,17 @@
             .charts-section {
                 grid-template-columns: 1fr;
             }
-            
+
             .filters-grid {
                 grid-template-columns: 1fr;
             }
-            
+
             .header h1 {
                 font-size: 2rem;
+            }
+
+            .settings-grid {
+                grid-template-columns: 1fr;
             }
         }
 
@@ -413,6 +631,8 @@
         .remove-from-category:hover {
             background: #c0392b;
         }
+
+        .reset-filters {
             background: linear-gradient(135deg, #e74c3c, #c0392b);
             color: white;
             border: none;
@@ -424,14 +644,11 @@
             margin-top: 15px;
         }
 
-	
         .reset-filters:hover {
             transform: translateY(-2px);
             box-shadow: 0 5px 15px rgba(231, 76, 60, 0.3);
-			
         }
-		
-		
+
         .file-upload {
             margin-bottom: 20px;
         }
@@ -478,9 +695,29 @@
 			box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
 		}
 
-
         #csvFileInput {
             display: none;
+        }
+
+        #importConfigInput {
+            display: none;
+        }
+
+        .info-box {
+            background: rgba(52, 152, 219, 0.1);
+            border-left: 4px solid #3498db;
+            padding: 12px;
+            margin-top: 15px;
+            font-size: 0.9rem;
+            color: #2c3e50;
+        }
+
+        .info-box code {
+            background: rgba(0, 0, 0, 0.1);
+            padding: 2px 6px;
+            border-radius: 3px;
+            font-family: 'Courier New', monospace;
+            font-size: 0.85rem;
         }
     </style>
 </head>
@@ -490,14 +727,88 @@
         <div class="header">
             <h1>🏀 Dashboard Basketball</h1>
             <p class="subtitle">Analyse des performances pour le basket</p>
+            <button class="settings-btn" onclick="toggleSettings()">
+                ⚙️ Paramètres
+            </button>
+        </div>
+
+        <!-- Section Paramètres (cachée par défaut) -->
+        <div id="settingsSection" class="settings-section hidden">
+            <div class="filters-title">⚙️ Paramètres du Dashboard</div>
+
+            <div class="settings-grid">
+                <!-- Import / Export Configuration -->
+                <div class="settings-panel">
+                    <h3>📊 Import / Export stats</h3>
+                    <button class="btn-primary" onclick="exportConfiguration()">
+                        💾 Export stats
+                    </button>
+                    <button class="btn-secondary" onclick="document.getElementById('importConfigInput').click()">
+                        📂 Import stats
+                    </button>
+                    <input type="file" id="importConfigInput" accept=".json" onchange="importConfiguration(event)">
+                    <div class="info-box">
+                        Exporte et importe la configuration complète incluant les catégories d'actions et les règles métier créées.
+                    </div>
+                </div>
+
+                <!-- Connexion données par défaut -->
+                <div class="settings-panel">
+                    <h3>🔗 Connexion données par défaut</h3>
+                    <div class="connection-option">
+                        <label>Source de données :</label>
+                        <select id="dataSourceSelect" onchange="handleDataSourceChange()" class="filter-control">
+                            <option value="none">Aucune</option>
+                            <option value="local">Locale</option>
+                            <option value="googleDrive">Google Drive</option>
+                        </select>
+                    </div>
+
+                    <!-- Option Locale -->
+                    <div id="localConnection" class="connection-details">
+                        <label>Chemin du fichier local :</label>
+                        <div style="display: flex; gap: 10px; margin-top: 8px;">
+                            <input type="text" id="localFilePath" placeholder="Chemin complet du fichier CSV" readonly>
+                            <button class="btn-primary" style="margin: 0;" onclick="document.getElementById('localFileInput').click()">
+                                Choisir
+                            </button>
+                        </div>
+                        <input type="file" id="localFileInput" accept=".csv" style="display: none;" onchange="handleLocalFileSelection(event)">
+                        <div class="info-box" style="margin-top: 10px;">
+                            Les données de ce fichier seront chargées automatiquement au démarrage.
+                        </div>
+                    </div>
+
+                    <!-- Option Google Drive -->
+                    <div id="googleDriveConnection" class="connection-details">
+                        <label>URL du Google Sheet :</label>
+                        <input type="text" id="googleSheetUrl" placeholder="https://docs.google.com/spreadsheets/d/...">
+                        <div style="display: flex; gap: 10px; margin-top: 10px;">
+                            <button class="btn-primary" style="margin: 0;" onclick="saveGoogleSheetUrl()">
+                                💾 Enregistrer l'URL
+                            </button>
+                            <button class="btn-secondary" style="margin: 0; background: linear-gradient(135deg, #2ecc71, #27ae60);" onclick="testGoogleSheetConnection()">
+                                🔍 Tester la connexion
+                            </button>
+                        </div>
+                        <div class="info-box" style="margin-top: 10px;">
+                            <strong>💡 Formats d'URL acceptés :</strong><br>
+                            • URL d'édition : <code>/d/DOCUMENT_ID/edit</code><br>
+                            • URL de publication : <code>/d/e/DOCUMENT_ID/pub?output=csv</code><br>
+                            • URL d'export : <code>/d/DOCUMENT_ID/export?format=csv</code><br><br>
+                            <strong>📌 Important :</strong> Le fichier doit être publié (Fichier > Partager > Publier sur le Web)
+                        </div>
+                    </div>
+                </div>
+            </div>
         </div>
 
         <!-- Upload CSV -->
         <div class="file-upload">
-            <div class="file-upload-area" onclick="document.getElementById('csvFileInput').click()" 
+            <div class="file-upload-area" onclick="document.getElementById('csvFileInput').click()"
                  ondrop="handleFileDrop(event)" ondragover="handleDragOver(event)" ondragleave="handleDragLeave(event)">
                 <p><strong>📁 Cliquez ici ou glissez votre fichier CSV</strong></p>
-                <p>Format attendu: Date,Adversaire,Joueur,Numéro,Quart-temps,Temps,Action</p>
+                <p>Format attendu: Date,Adversaire,Joueur,Numéro,Période,Temps,Action</p>
                 <input type="file" id="csvFileInput" accept=".csv" onchange="handleFileUpload(event)">
             </div>
         </div>
@@ -505,7 +816,7 @@
         <!-- Filtres -->
         <div class="filters-section">
             <div class="filters-title">
-                🔍 Filtres Multi-critères
+                🔍 Filtres Multi-Critères
             </div>
             <div class="filters-grid">
                 <div class="filter-group">
@@ -521,9 +832,9 @@
                     </select>
                 </div>
                 <div class="filter-group">
-                    <label>Quart-temps</label>
+                    <label>Période</label>
                     <select id="quartFilter" class="filter-control" onchange="applyFilters()">
-                        <option value="">Tous les quart-temps</option>
+                        <option value="">Toutes les périodes</option>
                     </select>
                 </div>
                 <div class="filter-group">
@@ -540,6 +851,7 @@
                 </div>
             </div>
             <button class="reset-filters" onclick="resetAllFilters()" style="padding:10px;margin-top:10px;border-radius:5px">🔄 Réinitialiser tous les filtres</button>
+            <button class="reset-filters" onclick="exportFilteredData()" style="background: #2ecc71;padding:10px;margin-top:10px;margin-left:10px;border-radius:5px">📊 Exporter les données filtrées</button>
         </div>
 
         <!-- Configuration des catégories -->
@@ -550,7 +862,7 @@
             <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 30px; margin-top: 20px;">
                 <div>
                     <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 15px;">
-                        <div style="width: 20px; height: 20px; background: #2c5aa0; border-radius: 4px;"></div>
+                        <div style="width: 20px; height: 20px; background: #2c5aa0;"></div>
                         <label style="font-weight: 600; color: #2c5aa0; font-size: 1.1rem;">Actions Positives</label>
                     </div>
                     <div id="positiveActionsConfig" class="checkbox-group">
@@ -567,9 +879,9 @@
                     </div>
                 </div>
             </div>
-            <div style="margin-top: 20px; padding: 15px; background: rgba(52, 152, 219, 0.1); border-radius: 5px; border-left: 4px solid #3498db;">
+            <div style="margin-top: 20px; padding: 15px; background: rgba(52, 152, 219, 0.1); border-left: 4px solid #3498db;">
                 <p style="margin: 0; color: #2c3e50; font-size: 0.9rem;">
-                    <strong>💡 Astuce :</strong> Glissez les actions entre les catégories pour personnaliser votre analyse. 
+                    <strong>💡 Astuce :</strong> Glissez les actions entre les catégories pour personnaliser votre analyse.
                     Les actions non catégorisées n'apparaîtront que dans les graphiques généraux.
                 </p>
             </div>
@@ -577,6 +889,86 @@
                 🔄 Réinitialiser la catégorisation
             </button>
         </div>
+
+		<!-- Gestion des règles métier -->
+		<div class="filters-section" id="businessRulesSection">
+			<div class="filters-title">
+				🎯 Gestion des règles métier
+				<button onclick="toggleBusinessRulesSection()" id="toggleBusinessRulesBtn"
+						style="margin-left: auto; background: #3498db; color: white; border: none;
+							   padding: 8px 16px; border-radius: 5px; cursor: pointer; font-size: 0.9rem;
+							   display: flex; align-items: center; gap: 5px;">
+					<span id="toggleIcon">📈</span> Développer / réduire
+				</button>
+			</div>
+
+			<!-- Contenu collapsible -->
+			<div id="businessRulesContent" style="display: none;">
+				<!-- Bandeau d'activation/désactivation -->
+				<div style="background: rgba(52, 152, 219, 0.1); border-radius: 8px; padding: 15px; margin-bottom: 20px;">
+					<div style="display: flex; align-items: center; gap: 10px; flex-wrap: wrap;">
+						<button class="reset-filters" onclick="toggleAllRules()" style="padding: 8px 15px; margin: 0; font-size: 0.9rem;" id="toggleAllRulesBtn">
+							✅ Tout désactiver
+						</button>
+						<div style="border-left: 2px solid #3498db; height: 30px;"></div>
+						<div id="rulesToggleContainer" style="display: flex; gap: 8px; flex-wrap: wrap; flex: 1;">
+							<span style="color: #7f8c8d; font-style: italic;">Aucune règle créée</span>
+						</div>
+					</div>
+				</div>
+
+				<!-- Formulaire de création -->
+				<div style="background: white; border-radius: 8px; padding: 20px; margin-bottom: 20px;">
+					<h3 style="margin: 0 0 15px 0; color: #2c3e50;">➕ Créer une nouvelle règle</h3>
+
+					<div style="display: grid; gap: 15px;">
+						<div>
+							<label style="display: block; margin-bottom: 5px; font-weight: 600; color: #34495e;">Nom de la règle</label>
+							<input type="text" id="ruleNameInput" placeholder="Ex: Possession efficace"
+								   style="width: 100%; padding: 10px; border: 2px solid #e8e8e8; border-radius: 5px; font-size: 14px;">
+						</div>
+
+						<div>
+							<label style="display: block; margin-bottom: 5px; font-weight: 600; color: #34495e;">
+								Séquence d'actions (dans l'ordre chronologique)
+							</label>
+							<div id="ruleActionsSelector" style="min-height: 100px; border: 2px dashed #bdc3c7; border-radius: 8px; padding: 15px; background: #f8f9fa;">
+								<p style="color: #7f8c8d; font-style: italic; margin: 0;">Importez d'abord un fichier CSV pour voir les actions disponibles</p>
+							</div>
+							<div id="selectedActionsPreview" style="margin-top: 10px; display: flex; gap: 5px; flex-wrap: wrap; min-height: 40px; align-items: center;">
+								<span style="color: #7f8c8d; font-size: 0.9rem;">Séquence : <span id="sequencePreview">vide</span></span>
+							</div>
+						</div>
+
+						<div>
+							<label style="display: block; margin-bottom: 5px; font-weight: 600; color: #34495e;">Type de règle</label>
+							<div style="display: flex; gap: 15px;">
+								<label style="display: flex; align-items: center; gap: 8px; cursor: pointer;">
+									<input type="radio" name="ruleType" value="positive" checked>
+									<span style="color: #2c5aa0; font-weight: 600;">✅ Positive</span>
+								</label>
+								<label style="display: flex; align-items: center; gap: 8px; cursor: pointer;">
+									<input type="radio" name="ruleType" value="negative">
+									<span style="color: #dc2626; font-weight: 600;">❌ Négative</span>
+								</label>
+							</div>
+						</div>
+
+						<button onclick="createBusinessRule()" style="background: linear-gradient(135deg, #2ecc71, #27ae60); color: white; border: none; padding: 12px 25px; border-radius: 8px; cursor: pointer; font-weight: 600; font-size: 1rem;">
+							➕ Créer la règle
+						</button>
+					</div>
+				</div>
+
+				<!-- Liste des règles existantes -->
+				<div style="background: white; border-radius: 8px; padding: 20px;">
+					<h3 style="margin: 0 0 15px 0; color: #2c3e50;">📋 Règles existantes</h3>
+					<div id="rulesListContainer">
+						<p style="color: #7f8c8d; font-style: italic; text-align: center; padding: 20px;">Aucune règle créée pour le moment</p>
+					</div>
+				</div>
+			</div>
+		</div>
 
         <!-- Vue d'ensemble statistiques -->
         <div class="stats-overview" id="statsOverview">
@@ -613,42 +1005,59 @@
         </div>
 
         <!-- Graphiques -->
-        <div class="charts-section">
+        <div class="charts-section full-width">
             <div class="chart-container">
                 <div class="chart-title">📊 Performance par joueur (positives vs négatives)</div>
                 <canvas id="playersChart" width="400" height="300"></canvas>
             </div>
-            <div class="chart-container">
-                <div class="chart-title">⏰ Performance par quart-temps (positives vs négatives)</div>
+            <div class="chart-container full-width">
+                <div class="chart-title">⏰ Performance par période (positives vs négatives)</div>
                 <canvas id="quartersChart" width="400" height="300"></canvas>
             </div>
         </div>
 
-        <div class="charts-section">
+        <div class="charts-section full-width">
             <div class="chart-container">
                 <div class="chart-title">🎯 Types d'actions</div>
                 <canvas id="actionsChart" width="400" height="300"></canvas>
             </div>
-            <div class="chart-container">
+            <div class="chart-container full-width">
                 <div class="chart-title">📈 Évolution temporelle (positives vs négatives)</div>
                 <canvas id="timelineChart" width="400" height="300"></canvas>
             </div>
         </div>
 
-        <div class="charts-section">
+        <div class="charts-section full-width">
             <div class="chart-container">
                 <div class="chart-title">🏆 Classement joueurs par performance (différentiel)</div>
                 <canvas id="performanceRankingChart" width="400" height="300"></canvas>
             </div>
-            <div class="chart-container">
+            <div class="chart-container full-width">
                 <div class="chart-title">📊 Répartition équilibre/déséquilibre</div>
                 <canvas id="balanceChart" width="400" height="300"></canvas>
             </div>
         </div>
 
+		<div class="charts-section full-width">
+			<div class="chart-container">
+				<div class="chart-title">📊 Types d'actions par période</div>
+				<canvas id="actionsByQuarterChart" width="400" height="300"></canvas>
+			</div>
+			<div class="chart-container full-width">
+				<div class="chart-title">📈 Types d'actions par match</div>
+				<canvas id="actionsByMatchChart" width="400" height="300"></canvas>
+			</div>
+		</div>
+
         <!-- Détail des joueurs -->
         <div class="players-section">
             <div class="chart-title">👤 Analyse détaillée des joueurs</div>
+
+            <!-- Filtrage des statistiques -->
+            <div class="stats-filter-container" id="statsFilterContainer">
+                <!-- Boutons générés dynamiquement -->
+            </div>
+
             <div class="players-grid" id="playersGrid">
                 <!-- Dynamiquement rempli -->
             </div>
@@ -656,15 +1065,665 @@
     </div>
 
     <script>
+        // ============================================
+        // VARIABLES GLOBALES
+        // ============================================
         let basketballData = [];
         let filteredData = [];
         let charts = {};
         let customPositiveActions = [];
         let customNegativeActions = [];
+        let selectedStats = []; // Sera rempli dynamiquement avec les actions du CSV
 
-        // Initialisation sans données par défaut
+		let businessRules = [];
+		let ruleMatches = [];
+		let nextRuleId = 1;
+
+		// États de sections
+		let businessRulesSectionCollapsed = true;
+        let settingsSectionVisible = false;
+
+        // Configuration de connexion aux données
+        let dataSourceConfig = {
+            type: 'none', // 'none', 'local', 'googleDrive'
+            localFilePath: '',
+            localFileData: null,
+            googleSheetUrl: ''
+        };
+
+        // ============================================
+        // GESTION DES PARAMÈTRES
+        // ============================================
+
+        function toggleSettings() {
+            const settingsSection = document.getElementById('settingsSection');
+            settingsSectionVisible = !settingsSectionVisible;
+
+            if (settingsSectionVisible) {
+                settingsSection.classList.remove('hidden');
+            } else {
+                settingsSection.classList.add('hidden');
+            }
+        }
+
+        function exportConfiguration() {
+            const config = {
+                version: "1.0",
+                exportDate: new Date().toISOString(),
+                customPositiveActions: customPositiveActions,
+                customNegativeActions: customNegativeActions,
+                businessRules: businessRules,
+                dataSourceConfig: {
+                    type: dataSourceConfig.type,
+                    googleSheetUrl: dataSourceConfig.googleSheetUrl
+                    // Ne pas exporter localFileData pour des raisons de taille
+                }
+            };
+
+            const jsonContent = JSON.stringify(config, null, 2);
+            const blob = new Blob([jsonContent], { type: 'application/json;charset=utf-8;' });
+            const url = window.URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `basketball_config_${new Date().toISOString().split('T')[0]}.json`;
+            a.click();
+            window.URL.revokeObjectURL(url);
+
+            alert('✅ Configuration exportée avec succès !');
+        }
+
+        function importConfiguration(event) {
+            const file = event.target.files[0];
+            if (!file) return;
+
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                try {
+                    const config = JSON.parse(e.target.result);
+
+                    if (!config.version || !config.customPositiveActions) {
+                        alert('❌ Format de fichier invalide');
+                        return;
+                    }
+
+                    // Importer les catégories
+                    customPositiveActions = config.customPositiveActions || [];
+                    customNegativeActions = config.customNegativeActions || [];
+
+                    // Importer les règles métier
+                    businessRules = config.businessRules || [];
+                    if (businessRules.length > 0) {
+                        nextRuleId = Math.max(...businessRules.map(r => parseInt(r.id.replace('rule_', '')))) + 1;
+                    }
+
+                    // Importer la config de source de données
+                    if (config.dataSourceConfig) {
+                        if (config.dataSourceConfig.googleSheetUrl) {
+                            document.getElementById('googleSheetUrl').value = config.dataSourceConfig.googleSheetUrl;
+                            dataSourceConfig.googleSheetUrl = config.dataSourceConfig.googleSheetUrl;
+                        }
+                    }
+
+                    // Mettre à jour l'affichage si des données sont déjà chargées
+                    if (basketballData.length > 0) {
+                        const allActions = [...new Set(basketballData.map(d => d.Action))].sort();
+                        updateCategoryConfiguration(allActions);
+                        updateRulesList();
+                        updateRulesToggleBanner();
+                        detectRuleMatches();
+                        updateDashboard();
+                    }
+
+                    alert(`✅ Configuration importée avec succès !\n\n` +
+                          `- ${customPositiveActions.length} actions positives\n` +
+                          `- ${customNegativeActions.length} actions négatives\n` +
+                          `- ${businessRules.length} règles métier`);
+
+                } catch (error) {
+                    console.error('Erreur import:', error);
+                    alert('❌ Erreur lors de l\'import de la configuration');
+                }
+            };
+
+            reader.readAsText(file);
+            event.target.value = '';
+        }
+
+        function handleDataSourceChange() {
+            const sourceType = document.getElementById('dataSourceSelect').value;
+            const localConnection = document.getElementById('localConnection');
+            const googleDriveConnection = document.getElementById('googleDriveConnection');
+
+            // Masquer toutes les options
+            localConnection.classList.remove('visible');
+            googleDriveConnection.classList.remove('visible');
+
+            // Afficher l'option sélectionnée
+            if (sourceType === 'local') {
+                localConnection.classList.add('visible');
+                dataSourceConfig.type = 'local';
+            } else if (sourceType === 'googleDrive') {
+                googleDriveConnection.classList.add('visible');
+                dataSourceConfig.type = 'googleDrive';
+            } else {
+                dataSourceConfig.type = 'none';
+            }
+
+            // Sauvegarder la config
+            saveDataSourceConfig();
+        }
+
+        function handleLocalFileSelection(event) {
+            const file = event.target.files[0];
+            if (!file) return;
+
+            document.getElementById('localFilePath').value = file.name;
+
+            // Lire et stocker le contenu du fichier
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                dataSourceConfig.localFilePath = file.name;
+                dataSourceConfig.localFileData = e.target.result;
+                saveDataSourceConfig();
+
+                // Charger immédiatement les données
+                parseCSVData(e.target.result);
+                alert('✅ Fichier local enregistré comme source par défaut !');
+            };
+            reader.readAsText(file);
+        }
+
+        function saveGoogleSheetUrl() {
+            const url = document.getElementById('googleSheetUrl').value.trim();
+            if (!url) {
+                alert('⚠️ Veuillez saisir une URL valide');
+                return;
+            }
+
+            dataSourceConfig.googleSheetUrl = url;
+            saveDataSourceConfig();
+
+            // Tenter de charger les données
+            loadFromGoogleSheet();
+        }
+
+        function testGoogleSheetConnection() {
+            const url = document.getElementById('googleSheetUrl').value.trim();
+            if (!url) {
+                alert('⚠️ Veuillez saisir une URL pour tester');
+                return;
+            }
+
+            // Sauvegarder temporairement l'URL actuelle
+            const previousUrl = dataSourceConfig.googleSheetUrl;
+            dataSourceConfig.googleSheetUrl = url;
+
+            console.log('🧪 Test de connexion Google Sheet...');
+
+            // Tester le chargement sans sauvegarder
+            loadFromGoogleSheet();
+
+            // Restaurer l'URL précédente si le test échoue
+            setTimeout(() => {
+                if (!basketballData || basketballData.length === 0) {
+                    dataSourceConfig.googleSheetUrl = previousUrl;
+                }
+            }, 3000);
+        }
+
+        function saveDataSourceConfig() {
+            try {
+                const configToSave = {
+                    type: dataSourceConfig.type,
+                    localFilePath: dataSourceConfig.localFilePath,
+                    localFileData: dataSourceConfig.localFileData,
+                    googleSheetUrl: dataSourceConfig.googleSheetUrl
+                };
+                localStorage.setItem('dataSourceConfig', JSON.stringify(configToSave));
+            } catch (e) {
+                console.warn('Erreur sauvegarde config:', e);
+            }
+        }
+
+        function loadDataSourceConfig() {
+            try {
+                const saved = localStorage.getItem('dataSourceConfig');
+                if (saved) {
+                    const config = JSON.parse(saved);
+                    dataSourceConfig = config;
+
+                    // Restaurer l'UI
+                    document.getElementById('dataSourceSelect').value = config.type || 'none';
+
+                    if (config.type === 'local' && config.localFilePath) {
+                        document.getElementById('localFilePath').value = config.localFilePath;
+                        handleDataSourceChange();
+
+                        // Auto-charger si données disponibles
+                        if (config.localFileData) {
+                            parseCSVData(config.localFileData);
+                        }
+                    } else if (config.type === 'googleDrive' && config.googleSheetUrl) {
+                        document.getElementById('googleSheetUrl').value = config.googleSheetUrl;
+                        handleDataSourceChange();
+                        loadFromGoogleSheet();
+                    }
+                }
+            } catch (e) {
+                console.warn('Erreur chargement config:', e);
+            }
+        }
+
+        function loadFromGoogleSheet() {
+            const url = dataSourceConfig.googleSheetUrl;
+            if (!url) return;
+
+            // Extraire l'ID du document Google Sheets
+            let csvUrl = url;
+            let sheetId = null;
+
+            // Essayer d'extraire l'ID du document
+            const idMatch = url.match(/\/d\/([a-zA-Z0-9-_]+)/);
+            const eIdMatch = url.match(/\/d\/e\/([a-zA-Z0-9-_]+)/);
+
+            if (eIdMatch) {
+                // Format publication : /d/e/DOCUMENT_ID/pub
+                sheetId = eIdMatch[1];
+                csvUrl = `https://docs.google.com/spreadsheets/d/e/${sheetId}/pub?output=csv`;
+                console.log('📄 Format publication détecté, ID:', sheetId);
+            } else if (idMatch) {
+                // Format édition : /d/DOCUMENT_ID/edit
+                sheetId = idMatch[1];
+                csvUrl = `https://docs.google.com/spreadsheets/d/${sheetId}/export?format=csv`;
+                console.log('📄 Format édition détecté, ID:', sheetId);
+            } else if (url.includes('output=csv') || url.includes('export?format=csv')) {
+                // URL déjà au bon format
+                csvUrl = url;
+                console.log('📄 URL CSV détectée');
+            }
+
+            console.log('🔗 Chargement depuis:', csvUrl);
+
+            // Tentative 1 : Fetch direct
+            fetch(csvUrl, { mode: 'cors' })
+                .then(response => {
+                    console.log('📥 Réponse reçue:', response.status, response.statusText);
+                    if (!response.ok) {
+                        throw new Error(`Erreur HTTP ${response.status}`);
+                    }
+                    return response.text();
+                })
+                .then(csvData => {
+                    console.log('✅ Données CSV reçues:', csvData.substring(0, 200) + '...');
+                    parseCSVData(csvData);
+                    alert('✅ Données chargées depuis Google Drive !');
+                })
+                .catch(error => {
+                    console.error('❌ Erreur fetch direct:', error);
+
+                    // Tentative 2 : Utiliser un proxy CORS
+                    const proxyUrl = `https://api.allorigins.win/raw?url=${encodeURIComponent(csvUrl)}`;
+                    console.log('🔄 Tentative avec proxy CORS:', proxyUrl);
+
+                    fetch(proxyUrl)
+                        .then(response => {
+                            if (!response.ok) {
+                                throw new Error('Erreur proxy CORS');
+                            }
+                            return response.text();
+                        })
+                        .then(csvData => {
+                            console.log('✅ Données CSV reçues via proxy');
+                            parseCSVData(csvData);
+                            alert('✅ Données chargées depuis Google Drive (via proxy) !');
+                        })
+                        .catch(proxyError => {
+                            console.error('❌ Erreur proxy CORS:', proxyError);
+                            alert('❌ Impossible de charger le Google Sheet.\n\n' +
+                                  'Erreurs rencontrées:\n' +
+                                  `1. Fetch direct: ${error.message}\n` +
+                                  `2. Proxy CORS: ${proxyError.message}\n\n` +
+                                  'Solutions:\n' +
+                                  '• Vérifiez que le fichier est bien publié\n' +
+                                  '• Essayez d\'utiliser l\'import manuel (fichier local)');
+                        });
+                });
+        }
+
+        // ============================================
+        // GESTION DES RÈGLES MÉTIER
+        // ============================================
+
+        let tempRuleSequence = [];
+
+		function toggleBusinessRulesSection() {
+			const content = document.getElementById('businessRulesContent');
+			const icon = document.getElementById('toggleIcon');
+
+			businessRulesSectionCollapsed = !businessRulesSectionCollapsed;
+
+			if (businessRulesSectionCollapsed) {
+				content.style.maxHeight = content.scrollHeight + 'px';
+				setTimeout(() => {
+					content.style.maxHeight = '0px';
+					content.style.opacity = '0';
+				}, 10);
+				setTimeout(() => {
+					content.style.display = 'none';
+				}, 300);
+				icon.textContent = '📈';
+			} else {
+				content.style.display = 'block';
+				content.style.maxHeight = '0px';
+				content.style.opacity = '0';
+				setTimeout(() => {
+					content.style.maxHeight = content.scrollHeight + 'px';
+					content.style.opacity = '1';
+				}, 10);
+				setTimeout(() => {
+					content.style.maxHeight = 'none';
+				}, 300);
+				icon.textContent = '📉';
+			}
+		}
+
+		function initializeRuleActionsSelector() {
+			if (basketballData.length === 0) return;
+
+			const allActions = [...new Set(basketballData.map(d => d.Action))].sort();
+			const container = document.getElementById('ruleActionsSelector');
+
+			container.innerHTML = '<p style="margin: 0 0 10px 0; color: #34495e; font-weight: 600;">Cliquez pour ajouter des actions dans l\'ordre :</p>';
+
+			const actionsGrid = document.createElement('div');
+			actionsGrid.style.cssText = 'display: flex; flex-wrap: wrap; gap: 8px;';
+
+			allActions.forEach(action => {
+				const btn = document.createElement('button');
+				btn.textContent = action;
+				btn.className = 'rule-action-btn';
+				btn.style.cssText = `
+					background: white;
+					border: 2px solid #3498db;
+					color: #3498db;
+					padding: 8px 15px;
+					border-radius: 5px;
+					cursor: pointer;
+					font-size: 0.9rem;
+					transition: all 0.2s ease;
+				`;
+
+				btn.onmouseover = () => {
+					btn.style.background = '#3498db';
+					btn.style.color = 'white';
+				};
+				btn.onmouseout = () => {
+					btn.style.background = 'white';
+					btn.style.color = '#3498db';
+				};
+
+				btn.onclick = () => addActionToSequence(action);
+				actionsGrid.appendChild(btn);
+			});
+
+			container.appendChild(actionsGrid);
+		}
+
+		function addActionToSequence(action) {
+			tempRuleSequence.push(action);
+			updateSequencePreview();
+		}
+
+		function updateSequencePreview() {
+			const preview = document.getElementById('sequencePreview');
+
+			if (tempRuleSequence.length === 0) {
+				preview.innerHTML = 'vide';
+				return;
+			}
+
+			preview.innerHTML = tempRuleSequence.map((action, idx) =>
+				`<span style="background: #3498db; color: white; padding: 4px 10px; border-radius: 5px; font-size: 0.85rem; display: inline-flex; align-items: center; gap: 5px;">
+					${idx + 1}. ${action}
+					<button onclick="removeActionFromSequence(${idx})" style="background: rgba(255,255,255,0.3); border: none; border-radius: 3px; cursor: pointer; padding: 2px 6px; color: white; font-weight: bold;">×</button>
+				</span>`
+			).join(' → ');
+		}
+
+		function removeActionFromSequence(index) {
+			tempRuleSequence.splice(index, 1);
+			updateSequencePreview();
+		}
+
+		function createBusinessRule() {
+			const name = document.getElementById('ruleNameInput').value.trim();
+			const isPositive = document.querySelector('input[name="ruleType"]:checked').value === 'positive';
+
+			if (!name) {
+				alert('⚠️ Veuillez donner un nom à la règle');
+				return;
+			}
+
+			if (tempRuleSequence.length < 2) {
+				alert('⚠️ Une règle doit contenir au moins 2 actions');
+				return;
+			}
+
+			const newRule = {
+				id: `rule_${nextRuleId++}`,
+				name: name,
+				actions: [...tempRuleSequence],
+				isPositive: isPositive,
+				isActive: true,
+				color: isPositive ? '#2c5aa0' : '#dc2626'
+			};
+
+			businessRules.push(newRule);
+			console.log('✅ Règle créée:', newRule);
+
+			// Réinitialiser le formulaire
+			document.getElementById('ruleNameInput').value = '';
+			tempRuleSequence = [];
+			updateSequencePreview();
+
+			// Ouvrir la section des règles métier si elle est réduite
+			if (businessRulesSectionCollapsed) {
+				toggleBusinessRulesSection();
+			}
+
+			console.log('📊 Données disponibles:', filteredData.length, 'actions');
+			detectRuleMatches();
+			console.log('🎯 Détections trouvées:', ruleMatches.length);
+			updateRulesList();
+			updateRulesToggleBanner();
+			applyFilters();
+
+			alert(`✅ Règle "${name}" créée avec succès !\n${ruleMatches.filter(m => m.ruleId === newRule.id).length} séquences détectées.`);
+		}
+
+		function updateRulesList() {
+			const container = document.getElementById('rulesListContainer');
+
+			if (businessRules.length === 0) {
+				container.innerHTML = '<p style="color: #7f8c8d; font-style: italic; text-align: center; padding: 20px;">Aucune règle créée pour le moment</p>';
+				return;
+			}
+
+			console.log('📋 Mise à jour de la liste des règles:', businessRules.length, 'règle(s)');
+
+			container.innerHTML = businessRules.map(rule => {
+				const detectionCount = ruleMatches.filter(m => m.ruleId === rule.id).length;
+				console.log(`  - Règle "${rule.name}": ${detectionCount} détections`);
+
+				return `
+				<div style="background: ${rule.isActive ? 'linear-gradient(135deg, #f8f9fa, #e9ecef)' : '#f1f3f5'};
+							border-left: 5px solid ${rule.color};
+							padding: 15px;
+							margin-bottom: 15px;
+							opacity: ${rule.isActive ? '1' : '0.6'};">
+					<div style="display: flex; justify-content: space-between; align-items: start; margin-bottom: 10px;">
+						<div>
+							<h4 style="margin: 0 0 5px 0; color: #2c3e50; font-size: 1.1rem;">
+								${rule.isActive ? '✅' : '⭕'} ${rule.name}
+							</h4>
+							<span style="background: ${rule.color}; color: white; padding: 3px 10px; border-radius: 5px; font-size: 0.8rem; font-weight: 600;">
+								${rule.isPositive ? 'POSITIVE' : 'NÉGATIVE'}
+							</span>
+						</div>
+						<div style="display: flex; gap: 8px;">
+							<button onclick="toggleRule('${rule.id}')"
+									style="background: ${rule.isActive ? '#f39c12' : '#2ecc71'}; color: white; border: none; padding: 8px 15px; border-radius: 5px; cursor: pointer; font-size: 0.85rem;">
+								${rule.isActive ? '⏸️ Désactiver' : '▶️ Activer'}
+							</button>
+							<button onclick="deleteRule('${rule.id}')"
+									style="background: #e74c3c; color: white; border: none; padding: 8px 15px; border-radius: 5px; cursor: pointer; font-size: 0.85rem;">
+								🗑️ Supprimer
+							</button>
+						</div>
+					</div>
+					<div style="background: white; padding: 10px; border-radius: 5px; font-family: monospace; font-size: 0.9rem;">
+						<strong>Séquence :</strong> ${rule.actions.map((a, i) => `<span style="color: ${rule.color};">${i + 1}. ${a}</span>`).join(' → ')}
+					</div>
+					<div style="margin-top: 10px; color: #7f8c8d; font-size: 0.85rem;">
+						${rule.actions.length} actions • Détections : <span style="font-weight: ${detectionCount > 0 ? 'bold' : 'normal'}; color: ${detectionCount > 0 ? rule.color : '#7f8c8d'};">${detectionCount}</span>
+					</div>
+				</div>
+				`;
+			}).join('');
+		}
+
+		function updateRulesToggleBanner() {
+			const container = document.getElementById('rulesToggleContainer');
+			const toggleBtn = document.getElementById('toggleAllRulesBtn');
+
+			if (businessRules.length === 0) {
+				container.innerHTML = '<span style="color: #7f8c8d; font-style: italic;">Aucune règle créée</span>';
+				toggleBtn.disabled = true;
+				toggleBtn.style.opacity = '0.5';
+				return;
+			}
+
+			toggleBtn.disabled = false;
+			toggleBtn.style.opacity = '1';
+
+			const allActive = businessRules.every(r => r.isActive);
+			toggleBtn.textContent = allActive ? '⭕ Tout désactiver' : '✅ Tout activer';
+
+			container.innerHTML = businessRules.map(rule => `
+				<button onclick="toggleRule('${rule.id}')"
+						style="background: ${rule.isActive ? rule.color : '#95a5a6'};
+							   color: white;
+							   border: none;
+							   padding: 6px 12px;
+							   border-radius: 5px;
+							   cursor: pointer;
+							   font-size: 0.85rem;
+							   transition: all 0.2s ease;">
+					${rule.isActive ? '✅' : '⭕'} ${rule.name}
+				</button>
+			`).join('');
+		}
+
+		function toggleRule(ruleId) {
+			const rule = businessRules.find(r => r.id === ruleId);
+			if (rule) {
+				rule.isActive = !rule.isActive;
+				detectRuleMatches();
+				updateRulesList();
+				updateRulesToggleBanner();
+				applyFilters();
+			}
+		}
+
+		function toggleAllRules() {
+			const allActive = businessRules.every(r => r.isActive);
+			businessRules.forEach(r => r.isActive = !allActive);
+			detectRuleMatches();
+			updateRulesList();
+			updateRulesToggleBanner();
+			applyFilters();
+		}
+
+		function deleteRule(ruleId) {
+			if (!confirm('Êtes-vous sûr de vouloir supprimer cette règle ?')) return;
+
+			businessRules = businessRules.filter(r => r.id !== ruleId);
+			ruleMatches = ruleMatches.filter(m => m.ruleId !== ruleId);
+
+			updateRulesList();
+			updateRulesToggleBanner();
+			applyFilters();
+		}
+
+		function detectRuleMatches() {
+			ruleMatches = [];
+
+			if (filteredData.length === 0 || businessRules.length === 0) {
+				console.log('⚠️ Pas de détection: filteredData =', filteredData.length, ', businessRules =', businessRules.length);
+				return;
+			}
+
+			const sortedData = [...filteredData].sort((a, b) =>
+				parseInt(a.Position || 0) - parseInt(b.Position || 0)
+			);
+
+			const dataByMatch = {};
+			sortedData.forEach(d => {
+				const matchKey = `${d.Date}|${d.Adversaire}`;
+				if (!dataByMatch[matchKey]) {
+					dataByMatch[matchKey] = [];
+				}
+				dataByMatch[matchKey].push(d);
+			});
+
+			console.log(`🔍 Recherche dans ${Object.keys(dataByMatch).length} match(s) avec ${businessRules.filter(r => r.isActive).length} règle(s) active(s)`);
+
+			Object.entries(dataByMatch).forEach(([matchKey, matchData]) => {
+				const [date, adversaire] = matchKey.split('|');
+
+				businessRules.filter(r => r.isActive).forEach(rule => {
+					const ruleLength = rule.actions.length;
+
+					for (let i = 0; i <= matchData.length - ruleLength; i++) {
+						const sequence = matchData.slice(i, i + ruleLength);
+
+						const matches = sequence.every((item, idx) =>
+							item.Action === rule.actions[idx]
+						);
+
+						if (matches) {
+							console.log(`✅ Séquence trouvée pour règle "${rule.name}":`, sequence.map(s => s.Action));
+							ruleMatches.push({
+								ruleId: rule.id,
+								ruleName: rule.name,
+								isPositive: rule.isPositive,
+								players: [...new Set(sequence.map(s => s.Joueur))],
+								startPosition: parseInt(sequence[0].Position || 0),
+								endPosition: parseInt(sequence[ruleLength - 1].Position || 0),
+								quarter: sequence[0]['Période'],
+								date: date,
+								adversaire: adversaire,
+								sequence: sequence.map(s => ({
+									action: s.Action,
+									player: s.Joueur,
+									time: s.Temps
+								}))
+							});
+						}
+					}
+				});
+			});
+
+			console.log(`🎯 ${ruleMatches.length} séquences détectées au total`);
+		}
+
+        // ============================================
+        // INITIALISATION
+        // ============================================
+
         window.onload = function() {
             initializeEmptyDashboard();
+            loadDataSourceConfig();
         };
 
         // Gestion des fichiers
@@ -701,43 +1760,43 @@
             event.currentTarget.classList.remove('dragover');
         }
 
-        // Initialiser le dashboard vide
         function initializeEmptyDashboard() {
             basketballData = [];
             filteredData = [];
-            
-            // Vider tous les filtres
+
             document.getElementById('dateFilter').innerHTML = '<option value="">Toutes les dates</option>';
             document.getElementById('adversaireFilter').innerHTML = '<option value="">Tous les adversaires</option>';
-            document.getElementById('quartFilter').innerHTML = '<option value="">Tous les quart-temps</option>';
+            document.getElementById('quartFilter').innerHTML = '<option value="">Toutes les périodes</option>';
             document.getElementById('playersCheckboxes').innerHTML = '<p style="color: #7f8c8d; font-style: italic;">Aucun joueur disponible</p>';
             document.getElementById('actionsCheckboxes').innerHTML = '<p style="color: #7f8c8d; font-style: italic;">Aucune action disponible</p>';
-            
-            // Initialiser les stats à zéro
+
             updateStats();
-            
-            // Initialiser les graphiques vides
             initializeEmptyCharts();
-            
-            // Vider la configuration des catégories
+
             document.getElementById('positiveActionsConfig').innerHTML = '<p style="color: #7f8c8d; font-style: italic;">Aucune action disponible</p>';
             document.getElementById('negativeActionsConfig').innerHTML = '<p style="color: #7f8c8d; font-style: italic;">Aucune action disponible</p>';
-            
-            // Réinitialiser les catégories personnalisées
+
             customPositiveActions = [];
             customNegativeActions = [];
+            selectedStats = [];
+            document.getElementById('statsFilterContainer').innerHTML = '';
             document.getElementById('playersGrid').innerHTML = '<div class="no-data">Importez un fichier CSV pour commencer l\'analyse</div>';
         }
+
         function parseCSVData(csvText) {
             const lines = csvText.trim().split('\n');
             const headers = lines[0].split(',').map(h => h.trim());
-            
-            basketballData = lines.slice(1).map(line => {
+
+            basketballData = lines.slice(1).map((line, index) => {
                 const values = line.split(',').map(v => v.trim());
                 const obj = {};
-                headers.forEach((header, index) => {
-                    obj[header] = values[index];
+                headers.forEach((header, idx) => {
+                    obj[header] = values[idx];
                 });
+                // Ajouter Position seulement si elle n'existe pas déjà dans le CSV
+                if (!obj.Position && obj.Position !== 0) {
+                    obj.Position = index;
+                }
                 return obj;
             });
 
@@ -746,9 +1805,7 @@
             updateDashboard();
         }
 
-        // Initialiser les filtres
         function initializeFilters() {
-            // Dates
             const dates = [...new Set(basketballData.map(d => d.Date))].sort();
             const dateSelect = document.getElementById('dateFilter');
             dateSelect.innerHTML = '<option value="">Toutes les dates</option>';
@@ -756,7 +1813,6 @@
                 dateSelect.innerHTML += `<option value="${date}">${new Date(date).toLocaleDateString('fr-FR')}</option>`;
             });
 
-            // Adversaires
             const adversaires = [...new Set(basketballData.map(d => d.Adversaire))].sort();
             const adversaireSelect = document.getElementById('adversaireFilter');
             adversaireSelect.innerHTML = '<option value="">Tous les adversaires</option>';
@@ -764,15 +1820,13 @@
                 adversaireSelect.innerHTML += `<option value="${adv}">${adv}</option>`;
             });
 
-            // Quart-temps
-            const quarters = [...new Set(basketballData.map(d => d['Quart-temps']))].sort();
+            const quarters = [...new Set(basketballData.map(d => d['Période']))].sort();
             const quartSelect = document.getElementById('quartFilter');
-            quartSelect.innerHTML = '<option value="">Tous les quart-temps</option>';
+            quartSelect.innerHTML = '<option value="">Toutes les périodes</option>';
             quarters.forEach(q => {
                 quartSelect.innerHTML += `<option value="${q}">${q}</option>`;
             });
 
-            // Joueurs (checkboxes)
             const players = [...new Set(basketballData.map(d => d.Joueur))].sort();
             const playersContainer = document.getElementById('playersCheckboxes');
             playersContainer.innerHTML = '';
@@ -789,7 +1843,6 @@
                 playersContainer.appendChild(div);
             });
 
-            // Actions (checkboxes)
             const actions = [...new Set(basketballData.map(d => d.Action))].sort();
             const actionsContainer = document.getElementById('actionsCheckboxes');
             actionsContainer.innerHTML = '';
@@ -806,183 +1859,322 @@
                 actionsContainer.appendChild(div);
             });
 
-            // Initialiser la configuration des catégories
             initializeCategoryConfiguration();
+			initializeRuleActionsSelector();
+            populateStatsFilters();
         }
 
-        // Initialiser la configuration des catégories
         function initializeCategoryConfiguration() {
             if (basketballData.length === 0) return;
-            
+
             const allActions = [...new Set(basketballData.map(d => d.Action))].sort();
             updateCategoryConfiguration(allActions);
         }
 
-     
-	function updateCategoryConfiguration(allActions) {
-    const positiveContainer = document.getElementById('positiveActionsConfig');
-    const negativeContainer = document.getElementById('negativeActionsConfig');
-    
-    // Vider les conteneurs
-    positiveContainer.innerHTML = '';
-    negativeContainer.innerHTML = '';
-    
-    // Supprimer toute section non catégorisée existante
-    const existingUncategorized = document.querySelector('.uncategorized-section');
-    if (existingUncategorized) {
-        existingUncategorized.remove();
-    }
-    
-    // Si aucune configuration personnalisée, utiliser les valeurs par défaut
-    if (customPositiveActions.length === 0 && customNegativeActions.length === 0) {
-        customPositiveActions = ['1 Point','2 Points', '3 Points', 'Passes décisive', 'Rebond', 'Interceptions']
-            .filter(action => allActions.includes(action));
-        customNegativeActions = ['Fautes', 'Perte de balle']
-            .filter(action => allActions.includes(action));
-    }
-    
-    // Actions positives
-    customPositiveActions.forEach(action => {
-        const div = createCategoryItem(action, 'positive');
-        positiveContainer.appendChild(div);
-    });
-    
-    // Actions négatives
-    customNegativeActions.forEach(action => {
-        const div = createCategoryItem(action, 'negative');
-        negativeContainer.appendChild(div);
-    });
-    
-    // Actions non catégorisées
-    const uncategorizedActions = allActions.filter(action => 
-        !customPositiveActions.includes(action) && !customNegativeActions.includes(action)
-    );
-    
-    // Créer la section non catégorisées
-    const uncategorizedSection = document.createElement('div');
-    uncategorizedSection.className = 'uncategorized-section';
-    
-    const uncategorizedTitle = document.createElement('p');
-    uncategorizedTitle.style.cssText = 'color: #7f8c8d; margin-bottom: 15px; font-weight: 600; font-size: 1.1rem;';
-    uncategorizedTitle.textContent = 'Actions non catégorisées :';
-    uncategorizedSection.appendChild(uncategorizedTitle);
-    
-    const uncategorizedContainer = document.createElement('div');
-    uncategorizedContainer.className = 'uncategorized-actions';
-    uncategorizedContainer.style.cssText = `
-        min-height: 60px;
-        padding: 15px;
-        background: rgba(248, 249, 250, 0.8);
-        border: 2px dashed #bdc3c7;
-        border-radius: 8px;
-        display: flex;
-        flex-wrap: wrap;
-        gap: 10px;
-        align-items: flex-start;
-        width: 100%;
-    `;
-    
-    if (uncategorizedActions.length > 0) {
-        uncategorizedActions.forEach(action => {
-            const div = createCategoryItem(action, 'uncategorized');
-            uncategorizedContainer.appendChild(div);
-        });
-    } else {
-        const messageDiv = document.createElement('div');
-        messageDiv.style.cssText = `
-            width: 100%;
-            text-align: center;
-            color: #27ae60;
-            font-style: italic;
-            font-weight: 500;
-            padding: 20px;
-        `;
-        messageDiv.textContent = 'Toutes les actions sont catégorisées';
-        uncategorizedContainer.appendChild(messageDiv);
-    }
-    
-    uncategorizedSection.appendChild(uncategorizedContainer);
-    
-    // Ajouter la section après la grille des catégories (pleine largeur)
-    const configSection = positiveContainer.closest('.filters-section');
-    configSection.appendChild(uncategorizedSection);
-    
-    // Rendre les zones droppables
-    makeDroppable(positiveContainer, 'positive');
-    makeDroppable(negativeContainer, 'negative');
-    makeDroppable(uncategorizedContainer, 'uncategorized');
-} 
-	 
-		// Créer un élément de catégorie
-		function createCategoryItem(action, category) {
-			const div = document.createElement('div');
-			div.className = `category-config-item ${category}`;
-			div.draggable = true;
-			div.dataset.action = action;
-			
-			// Style spécifique pour les actions non catégorisées
-			if (category === 'uncategorized') {
-				div.style.cssText += `
-					background: #ffffff;
-					border: 1px solid #dee2e6;
-					color: #6c757d;
-				`;
-			}
-			
-			div.innerHTML = `
-				<span>${action}</span>
-				${category !== 'uncategorized' ? '<button class="remove-from-category" onclick="removeFromCategory(this)">×</button>' : ''}
-			`;
-			
-			// Événements de drag
-			div.addEventListener('dragstart', function(e) {
-				e.dataTransfer.setData('text/plain', action);
-				div.classList.add('dragging');
-			});
-			
-			div.addEventListener('dragend', function(e) {
-				div.classList.remove('dragging');
-			});
-			
-			return div;
-		}
+        function updateCategoryConfiguration(allActions) {
+            const positiveContainer = document.getElementById('positiveActionsConfig');
+            const negativeContainer = document.getElementById('negativeActionsConfig');
 
-			// Rendre une zone droppable
-		function makeDroppable(container, category) {
-			container.addEventListener('dragover', function(e) {
-				e.preventDefault();
-				if (category !== 'uncategorized') {
-					container.classList.add('drag-over');
-				}
-			});
-			
-			container.addEventListener('dragleave', function(e) {
-				if (category !== 'uncategorized') {
-					container.classList.remove('drag-over');
-				}
-			});
-			
-			container.addEventListener('drop', function(e) {
-				e.preventDefault();
-				const action = e.dataTransfer.getData('text/plain');
-				if (category !== 'uncategorized') {
-					addToCategory(action, category);
-					container.classList.remove('drag-over');
-				}
-			});
-		}
+            positiveContainer.innerHTML = '';
+            negativeContainer.innerHTML = '';
 
-        function updatePerformanceRankingChart() {
+            const existingUncategorized = document.querySelector('.uncategorized-section');
+            if (existingUncategorized) {
+                existingUncategorized.remove();
+            }
+
+            if (customPositiveActions.length === 0 && customNegativeActions.length === 0) {
+                customPositiveActions = ['1 Point','2 Points', '3 Points', 'Passes décisive', 'Rebond', 'Interceptions']
+                    .filter(action => allActions.includes(action));
+                customNegativeActions = ['Fautes', 'Perte de balle']
+                    .filter(action => allActions.includes(action));
+            }
+
+            customPositiveActions.forEach(action => {
+                const div = createCategoryItem(action, 'positive');
+                positiveContainer.appendChild(div);
+            });
+
+            customNegativeActions.forEach(action => {
+                const div = createCategoryItem(action, 'negative');
+                negativeContainer.appendChild(div);
+            });
+
+            const uncategorizedActions = allActions.filter(action =>
+                !customPositiveActions.includes(action) && !customNegativeActions.includes(action)
+            );
+
+            const uncategorizedSection = document.createElement('div');
+            uncategorizedSection.className = 'uncategorized-section';
+
+            const uncategorizedTitle = document.createElement('p');
+            uncategorizedTitle.style.cssText = 'color: #7f8c8d; margin-bottom: 15px; font-weight: 600; font-size: 1.1rem;';
+            uncategorizedTitle.textContent = 'Actions non catégorisées :';
+            uncategorizedSection.appendChild(uncategorizedTitle);
+
+            const uncategorizedContainer = document.createElement('div');
+            uncategorizedContainer.className = 'uncategorized-actions';
+            uncategorizedContainer.style.cssText = `
+                min-height: 60px;
+                padding: 15px;
+                background: rgba(248, 249, 250, 0.8);
+                border: 2px dashed #bdc3c7;
+                border-radius: 8px;
+                display: flex;
+                flex-wrap: wrap;
+                gap: 10px;
+                align-items: flex-start;
+                width: 100%;
+            `;
+
+            if (uncategorizedActions.length > 0) {
+                uncategorizedActions.forEach(action => {
+                    const div = createCategoryItem(action, 'uncategorized');
+                    uncategorizedContainer.appendChild(div);
+                });
+            } else {
+                const messageDiv = document.createElement('div');
+                messageDiv.style.cssText = `
+                    width: 100%;
+                    text-align: center;
+                    color: #27ae60;
+                    font-style: italic;
+                    font-weight: 500;
+                    padding: 20px;
+                `;
+                messageDiv.textContent = 'Toutes les actions sont catégorisées';
+                uncategorizedContainer.appendChild(messageDiv);
+            }
+
+            uncategorizedSection.appendChild(uncategorizedContainer);
+
+            const configSection = positiveContainer.closest('.filters-section');
+            configSection.appendChild(uncategorizedSection);
+
+            makeDroppable(positiveContainer, 'positive');
+            makeDroppable(negativeContainer, 'negative');
+            makeDroppable(uncategorizedContainer, 'uncategorized');
+        }
+
+        function createCategoryItem(action, category) {
+            const div = document.createElement('div');
+            div.className = `category-config-item ${category}`;
+            div.draggable = true;
+            div.dataset.action = action;
+
+            if (category === 'uncategorized') {
+                div.style.cssText += `
+                    background: #ffffff;
+                    border: 1px solid #dee2e6;
+                    color: #6c757d;
+                `;
+            }
+
+            div.innerHTML = `
+                <span>${action}</span>
+                ${category !== 'uncategorized' ? '<button class="remove-from-category" onclick="removeFromCategory(this)">×</button>' : ''}
+            `;
+
+            div.addEventListener('dragstart', function(e) {
+                e.dataTransfer.setData('text/plain', action);
+                div.classList.add('dragging');
+            });
+
+            div.addEventListener('dragend', function(e) {
+                div.classList.remove('dragging');
+            });
+
+            return div;
+        }
+
+        function makeDroppable(container, category) {
+            container.addEventListener('dragover', function(e) {
+                e.preventDefault();
+                if (category !== 'uncategorized') {
+                    container.classList.add('drag-over');
+                }
+            });
+
+            container.addEventListener('dragleave', function(e) {
+                if (category !== 'uncategorized') {
+                    container.classList.remove('drag-over');
+                }
+            });
+
+            container.addEventListener('drop', function(e) {
+                e.preventDefault();
+                const action = e.dataTransfer.getData('text/plain');
+                if (category !== 'uncategorized') {
+                    addToCategory(action, category);
+                    container.classList.remove('drag-over');
+                }
+            });
+        }
+
+        function addToCategory(action, category) {
+            customPositiveActions = customPositiveActions.filter(a => a !== action);
+            customNegativeActions = customNegativeActions.filter(a => a !== action);
+
+            if (category === 'positive') {
+                customPositiveActions.push(action);
+            } else if (category === 'negative') {
+                customNegativeActions.push(action);
+            }
+
+            const allActions = [...new Set(basketballData.map(d => d.Action))].sort();
+            updateCategoryConfiguration(allActions);
+            updateDashboard();
+        }
+
+        function removeFromCategory(button) {
+            const action = button.parentElement.dataset.action;
+            customPositiveActions = customPositiveActions.filter(a => a !== action);
+            customNegativeActions = customNegativeActions.filter(a => a !== action);
+
+            const allActions = [...new Set(basketballData.map(d => d.Action))].sort();
+            updateCategoryConfiguration(allActions);
+            updateDashboard();
+        }
+
+        function resetCategorization() {
+            customPositiveActions = [];
+            customNegativeActions = [];
+
+            if (basketballData.length > 0) {
+                const allActions = [...new Set(basketballData.map(d => d.Action))].sort();
+                updateCategoryConfiguration(allActions);
+                updateDashboard();
+            }
+        }
+
+        function applyFilters() {
+            const dateFilter = document.getElementById('dateFilter').value;
+            const adversaireFilter = document.getElementById('adversaireFilter').value;
+            const quartFilter = document.getElementById('quartFilter').value;
+
+            const selectedPlayers = Array.from(document.querySelectorAll('#playersCheckboxes input:checked'))
+                .map(checkbox => checkbox.id.replace('player-', ''));
+
+            const selectedActions = Array.from(document.querySelectorAll('#actionsCheckboxes input:checked'))
+                .map(checkbox => checkbox.id.replace('action-', ''));
+
+            filteredData = basketballData.filter(d => {
+                return (!dateFilter || d.Date === dateFilter) &&
+                       (!adversaireFilter || d.Adversaire === adversaireFilter) &&
+                       (!quartFilter || d['Période'] === quartFilter) &&
+                       selectedPlayers.includes(d.Joueur) &&
+                       selectedActions.includes(d.Action);
+            });
+
+            detectRuleMatches();
+            updateDashboard();
+        }
+
+        function resetAllFilters() {
+            document.getElementById('dateFilter').value = '';
+            document.getElementById('adversaireFilter').value = '';
+            document.getElementById('quartFilter').value = '';
+
+            document.querySelectorAll('#playersCheckboxes .checkbox-item').forEach(item => {
+                item.querySelector('input').checked = true;
+                item.classList.add('active');
+            });
+
+            document.querySelectorAll('#actionsCheckboxes .checkbox-item').forEach(item => {
+                item.querySelector('input').checked = true;
+                item.classList.add('active');
+            });
+
+            filteredData = [...basketballData];
+            detectRuleMatches();
+            updateDashboard();
+        }
+
+        function categorizeActions() {
+            const positiveActions = customPositiveActions.length > 0 ? customPositiveActions :
+                ['1 Point', '2 Points', '3 Points', 'Passes décisive', 'Rebond', 'Interceptions'];
+            const negativeActions = customNegativeActions.length > 0 ? customNegativeActions :
+                ['Fautes', 'Perte de balle'];
+
+            return { positiveActions, negativeActions };
+        }
+
+        function updateStats() {
+            const { positiveActions, negativeActions } = categorizeActions();
+
+            const totalActions = filteredData.length;
+            const totalPoints = filteredData.filter(d =>
+                d.Action === '2 Points' || d.Action === '3 Points' || d.Action === '1 Point'
+            ).reduce((sum, d) => sum + parseInt(d.Action.split(' ')[0]), 0);
+
+            const positiveCount = filteredData.filter(d => positiveActions.includes(d.Action)).length;
+            const negativeCount = filteredData.filter(d => negativeActions.includes(d.Action)).length;
+
+            const activePlayers = new Set(filteredData.map(d => d.Joueur)).size;
+            const matches = new Set(filteredData.map(d => `${d.Date}-${d.Adversaire}`)).size;
+
+            document.getElementById('totalActions').textContent = totalActions;
+            document.getElementById('totalPoints').textContent = totalPoints;
+            document.getElementById('positiveActions').textContent = positiveCount;
+            document.getElementById('negativeActions').textContent = negativeCount;
+            document.getElementById('activePlayersCount').textContent = activePlayers;
+            document.getElementById('matchesCount').textContent = matches;
+        }
+
+        function initializeEmptyCharts() {
+            const chartIds = [
+                'playersChart', 'quartersChart', 'actionsChart', 'timelineChart',
+                'performanceRankingChart', 'balanceChart', 'actionsByQuarterChart', 'actionsByMatchChart'
+            ];
+
+            chartIds.forEach(chartId => {
+                const ctx = document.getElementById(chartId).getContext('2d');
+                if (charts[chartId]) charts[chartId].destroy();
+
+                charts[chartId] = new Chart(ctx, {
+                    type: 'bar',
+                    data: {
+                        labels: [],
+                        datasets: [{
+                            label: 'Aucune donnée',
+                            data: [],
+                            backgroundColor: '#e0e0e0'
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        plugins: {
+                            legend: { display: false }
+                        }
+                    }
+                });
+            });
+        }
+
+        function updateDashboard() {
+            updateStats();
+            updatePlayersChart();
+            updateQuartersChart();
+            updateActionsChart();
+            updateTimelineChart();
+            updatePerformanceRankingChart();
+            updateBalanceChart();
+            updateActionsByQuarterChart();
+            updateActionsByMatchChart();
+            updatePlayersGrid();
+        }
+
+        // Graphiques (simplifiés pour la taille du fichier)
+        function updatePlayersChart() {
             const { positiveActions, negativeActions } = categorizeActions();
             const playerStats = {};
-            
-            // Initialiser les stats des joueurs
+
             const players = [...new Set(filteredData.map(d => d.Joueur))];
             players.forEach(player => {
-                playerStats[player] = { positive: 0, negative: 0, performance: 0 };
+                playerStats[player] = { positive: 0, negative: 0 };
             });
-            
-            // Compter les actions par catégorie pour chaque joueur
+
             filteredData.forEach(d => {
                 if (positiveActions.includes(d.Action)) {
                     playerStats[d.Joueur].positive++;
@@ -991,97 +2183,218 @@
                 }
             });
 
-            // Graphique de classement des performances
-            const performanceRankingCtx = document.getElementById('performanceRankingChart').getContext('2d');
-            if (charts.performanceRanking) charts.performanceRanking.destroy();
-            
-            charts.performanceRanking = new Chart(performanceRankingCtx, {
+            const ctx = document.getElementById('playersChart').getContext('2d');
+            if (charts.playersChart) charts.playersChart.destroy();
+
+            charts.playersChart = new Chart(ctx, {
                 type: 'bar',
                 data: {
-                    labels: [],
-                    datasets: [{
-                        label: 'Score Performance',
-                        data: [],
-                        backgroundColor: '#6b7280',
-                        borderColor: '#4b5563',
-                        borderWidth: 2
-                    }]
+                    labels: players,
+                    datasets: [
+                        {
+                            label: 'Actions Positives',
+                            data: players.map(p => playerStats[p].positive),
+                            backgroundColor: '#2c5aa0'
+                        },
+                        {
+                            label: 'Actions Négatives',
+                            data: players.map(p => playerStats[p].negative),
+                            backgroundColor: '#dc2626'
+                        }
+                    ]
                 },
                 options: {
                     responsive: true,
                     maintainAspectRatio: false,
-                    indexAxis: 'y',
                     plugins: {
-                        legend: { display: false }
+                        legend: { position: 'top' }
                     },
                     scales: {
-                        x: { 
-                            beginAtZero: true,
-                            min: -5,
-                            max: 5
-                        },
-                        y: {
-                            ticks: { maxRotation: 0 }
-                        }
+                        y: { beginAtZero: true }
                     }
                 }
             });
+        }
 
-            // Graphique d'équilibre
-            const balanceCtx = document.getElementById('balanceChart').getContext('2d');
-            if (charts.balance) charts.balance.destroy();
-            
-            charts.balance = new Chart(balanceCtx, {
+        function updateQuartersChart() {
+            const { positiveActions, negativeActions } = categorizeActions();
+            const quarters = [...new Set(filteredData.map(d => d['Période']))].sort();
+            const quarterStats = {};
+
+            quarters.forEach(q => {
+                quarterStats[q] = { positive: 0, negative: 0 };
+            });
+
+            filteredData.forEach(d => {
+                if (positiveActions.includes(d.Action)) {
+                    quarterStats[d['Période']].positive++;
+                } else if (negativeActions.includes(d.Action)) {
+                    quarterStats[d['Période']].negative++;
+                }
+            });
+
+            const ctx = document.getElementById('quartersChart').getContext('2d');
+            if (charts.quartersChart) charts.quartersChart.destroy();
+
+            charts.quartersChart = new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: quarters,
+                    datasets: [
+                        {
+                            label: 'Actions Positives',
+                            data: quarters.map(q => quarterStats[q].positive),
+                            backgroundColor: '#2c5aa0'
+                        },
+                        {
+                            label: 'Actions Négatives',
+                            data: quarters.map(q => quarterStats[q].negative),
+                            backgroundColor: '#dc2626'
+                        }
+                    ]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: { position: 'top' }
+                    },
+                    scales: {
+                        y: { beginAtZero: true }
+                    }
+                }
+            });
+        }
+
+        function updateActionsChart() {
+            const actionCounts = {};
+            filteredData.forEach(d => {
+                actionCounts[d.Action] = (actionCounts[d.Action] || 0) + 1;
+            });
+
+            const ctx = document.getElementById('actionsChart').getContext('2d');
+            if (charts.actionsChart) charts.actionsChart.destroy();
+
+            charts.actionsChart = new Chart(ctx, {
                 type: 'doughnut',
                 data: {
-                    labels: [],
+                    labels: Object.keys(actionCounts),
                     datasets: [{
-                        data: [],
-                        backgroundColor: [],
-                        borderColor: [],
-                        borderWidth: 2
+                        data: Object.values(actionCounts),
+                        backgroundColor: [
+                            '#3498db', '#2ecc71', '#e74c3c', '#f39c12', '#9b59b6',
+                            '#1abc9c', '#34495e', '#e67e22'
+                        ]
                     }]
                 },
                 options: {
                     responsive: true,
                     maintainAspectRatio: false,
                     plugins: {
-                        legend: { position: 'bottom' }
+                        legend: { position: 'right' }
                     }
                 }
             });
+        }
 
-            // Calculer le score de performance (différentiel)
+        function updateTimelineChart() {
+            const { positiveActions, negativeActions } = categorizeActions();
+            const quarters = [...new Set(filteredData.map(d => d['Période']))].sort();
+            const quarterStats = {};
+
+            quarters.forEach(q => {
+                quarterStats[q] = { positive: 0, negative: 0 };
+            });
+
+            filteredData.forEach(d => {
+                if (positiveActions.includes(d.Action)) {
+                    quarterStats[d['Période']].positive++;
+                } else if (negativeActions.includes(d.Action)) {
+                    quarterStats[d['Période']].negative++;
+                }
+            });
+
+            const ctx = document.getElementById('timelineChart').getContext('2d');
+            if (charts.timelineChart) charts.timelineChart.destroy();
+
+            charts.timelineChart = new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: quarters,
+                    datasets: [
+                        {
+                            label: 'Actions Positives',
+                            data: quarters.map(q => quarterStats[q].positive),
+                            borderColor: '#2c5aa0',
+                            backgroundColor: 'rgba(44, 90, 160, 0.1)',
+                            fill: true
+                        },
+                        {
+                            label: 'Actions Négatives',
+                            data: quarters.map(q => quarterStats[q].negative),
+                            borderColor: '#dc2626',
+                            backgroundColor: 'rgba(220, 38, 38, 0.1)',
+                            fill: true
+                        }
+                    ]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: { position: 'top' }
+                    },
+                    scales: {
+                        y: { beginAtZero: true }
+                    }
+                }
+            });
+        }
+
+        function updatePerformanceRankingChart() {
+            const { positiveActions, negativeActions } = categorizeActions();
+            const playerStats = {};
+
+            const players = [...new Set(filteredData.map(d => d.Joueur))];
+            players.forEach(player => {
+                playerStats[player] = { positive: 0, negative: 0, performance: 0 };
+            });
+
+            filteredData.forEach(d => {
+                if (positiveActions.includes(d.Action)) {
+                    playerStats[d.Joueur].positive++;
+                } else if (negativeActions.includes(d.Action)) {
+                    playerStats[d.Joueur].negative++;
+                }
+            });
+
             Object.keys(playerStats).forEach(player => {
                 playerStats[player].performance = playerStats[player].positive - playerStats[player].negative;
             });
 
-            // Trier par performance décroissante
             const sortedPlayers = Object.entries(playerStats)
                 .sort((a, b) => b[1].performance - a[1].performance);
 
             const ctx = document.getElementById('performanceRankingChart').getContext('2d');
-            if (charts.performanceRanking) charts.performanceRanking.destroy();
-            
-            // Calculer l'échelle dynamiquement
+            if (charts.performanceRankingChart) charts.performanceRankingChart.destroy();
+
             const performanceValues = sortedPlayers.map(([, stats]) => stats.performance);
             const maxValue = Math.max(...performanceValues.map(Math.abs), 5);
             const scaledMax = Math.ceil(maxValue * 1.1);
-            
-            // Définir les couleurs selon le score
+
             const backgroundColors = performanceValues.map(value => {
-                if (value > 0) return '#166534'; // Vert foncé
-                if (value === 0) return '#000000'; // Noir
-                return '#dc2626'; // Rouge vif
+                if (value > 0) return '#166534';
+                if (value === 0) return '#000000';
+                return '#dc2626';
             });
-            
+
             const borderColors = performanceValues.map(value => {
-                if (value > 0) return '#15803d'; // Vert foncé bordure
-                if (value === 0) return '#374151'; // Gris foncé bordure
-                return '#991b1b'; // Rouge foncé bordure
+                if (value > 0) return '#15803d';
+                if (value === 0) return '#374151';
+                return '#991b1b';
             });
-            
-            charts.performanceRanking = new Chart(ctx, {
+
+            charts.performanceRankingChart = new Chart(ctx, {
                 type: 'bar',
                 data: {
                     labels: sortedPlayers.map(([player]) => player),
@@ -1096,7 +2409,7 @@
                 options: {
                     responsive: true,
                     maintainAspectRatio: false,
-                    indexAxis: 'y', // Barres horizontales pour mieux voir les noms
+                    indexAxis: 'y',
                     plugins: {
                         legend: { display: false },
                         tooltip: {
@@ -1133,13 +2446,12 @@
         function updateBalanceChart() {
             const { positiveActions, negativeActions } = categorizeActions();
             const playerStats = {};
-            
-            // Calculer les stats par joueur
+
             const players = [...new Set(filteredData.map(d => d.Joueur))];
             players.forEach(player => {
                 playerStats[player] = { positive: 0, negative: 0 };
             });
-            
+
             filteredData.forEach(d => {
                 if (positiveActions.includes(d.Action)) {
                     playerStats[d.Joueur].positive++;
@@ -1148,10 +2460,9 @@
                 }
             });
 
-            // Catégoriser les joueurs selon leur équilibre
-            let balanced = 0; // Performance entre -2 et +2
-            let positive = 0; // Performance > +2
-            let negative = 0; // Performance < -2
+            let balanced = 0;
+            let positive = 0;
+            let negative = 0;
 
             Object.values(playerStats).forEach(stats => {
                 const performance = stats.positive - stats.negative;
@@ -1161,9 +2472,9 @@
             });
 
             const ctx = document.getElementById('balanceChart').getContext('2d');
-            if (charts.balance) charts.balance.destroy();
-            
-            charts.balance = new Chart(ctx, {
+            if (charts.balanceChart) charts.balanceChart.destroy();
+
+            charts.balanceChart = new Chart(ctx, {
                 type: 'doughnut',
                 data: {
                     labels: ['Équilibrés (-2 à +2)', 'Performants (+2)', 'En difficulté (-2)'],
@@ -1193,231 +2504,107 @@
             });
         }
 
-        // Ajouter une action à une catégorie
-        function addToCategory(action, category) {
-            // Retirer de toutes les catégories
-            customPositiveActions = customPositiveActions.filter(a => a !== action);
-            customNegativeActions = customNegativeActions.filter(a => a !== action);
-            
-            // Ajouter à la nouvelle catégorie
-            if (category === 'positive') {
-                customPositiveActions.push(action);
-            } else if (category === 'negative') {
-                customNegativeActions.push(action);
-            }
-            
-            // Mettre à jour l'affichage et les graphiques
-            const allActions = [...new Set(basketballData.map(d => d.Action))].sort();
-            updateCategoryConfiguration(allActions);
-            updateDashboard();
-        }
+        function updateActionsByQuarterChart() {
+            const allActions = [...new Set(filteredData.map(d => d.Action))].sort();
 
-        // Retirer une action d'une catégorie
-        function removeFromCategory(button) {
-            const action = button.parentElement.dataset.action;
-            customPositiveActions = customPositiveActions.filter(a => a !== action);
-            customNegativeActions = customNegativeActions.filter(a => a !== action);
-            
-            const allActions = [...new Set(basketballData.map(d => d.Action))].sort();
-            updateCategoryConfiguration(allActions);
-            updateDashboard();
-        }
+            // Ajouter les règles métier comme types d'actions
+            const ruleActions = businessRules
+                .filter(r => ruleMatches.some(m => m.ruleId === r.id))
+                .map(r => `[RÈGLE] ${r.name}`);
 
-        // Réinitialiser la catégorisation
-        function resetCategorization() {
-            customPositiveActions = [];
-            customNegativeActions = [];
-            
-            if (basketballData.length > 0) {
-                const allActions = [...new Set(basketballData.map(d => d.Action))].sort();
-                updateCategoryConfiguration(allActions);
-                updateDashboard();
-            }
-        }
-        function applyFilters() {
-            const dateFilter = document.getElementById('dateFilter').value;
-            const adversaireFilter = document.getElementById('adversaireFilter').value;
-            const quartFilter = document.getElementById('quartFilter').value;
-            
-            const selectedPlayers = Array.from(document.querySelectorAll('#playersCheckboxes input:checked'))
-                .map(cb => cb.id.replace('player-', ''));
-            
-            const selectedActions = Array.from(document.querySelectorAll('#actionsCheckboxes input:checked'))
-                .map(cb => cb.id.replace('action-', ''));
+            const actionTypes = [...allActions, ...ruleActions];
+            const quarters = [...new Set(filteredData.map(d => d['Période']))].sort();
 
-            filteredData = basketballData.filter(item => {
-                return (!dateFilter || item.Date === dateFilter) &&
-                       (!adversaireFilter || item.Adversaire === adversaireFilter) &&
-                       (!quartFilter || item['Quart-temps'] === quartFilter) &&
-                       (selectedPlayers.length === 0 || selectedPlayers.includes(item.Joueur)) &&
-                       (selectedActions.length === 0 || selectedActions.includes(item.Action));
+            const dataByQuarter = {};
+            quarters.forEach(q => {
+                dataByQuarter[q] = {};
+                actionTypes.forEach(action => {
+                    dataByQuarter[q][action] = 0;
+                });
             });
 
-            updateDashboard();
-        }
-
-        // Réinitialiser les filtres
-        function resetAllFilters() {
-            document.getElementById('dateFilter').value = '';
-            document.getElementById('adversaireFilter').value = '';
-            document.getElementById('quartFilter').value = '';
-            
-            document.querySelectorAll('#playersCheckboxes input').forEach(cb => {
-                cb.checked = true;
-                cb.parentElement.classList.add('active');
-            });
-            
-            document.querySelectorAll('#actionsCheckboxes input').forEach(cb => {
-                cb.checked = true;
-                cb.parentElement.classList.add('active');
-            });
-            
-            filteredData = [...basketballData];
-            updateDashboard();
-        }
-
-        // Mettre à jour le dashboard
-        function updateDashboard() {
-            updateStats();
-            updateCharts();
-            updatePlayersGrid();
-        }
-
-        // Catégoriser les actions selon la configuration personnalisée
-        function categorizeActions() {
-            // Si aucune configuration personnalisée, utiliser les valeurs par défaut
-            if (customPositiveActions.length === 0 && customNegativeActions.length === 0) {
-                const defaultPositiveActions = ['2 Points', '3 Points', 'Passes décisive', 'Rebond', 'Interceptions'];
-                const defaultNegativeActions = ['Fautes', 'Perte de balle'];
-                return { positiveActions: defaultPositiveActions, negativeActions: defaultNegativeActions };
-            }
-            
-            return { positiveActions: customPositiveActions, negativeActions: customNegativeActions };
-        }
-
-        // Calculer les stats par catégorie
-        function calculateCategorizedStats(data) {
-            const { positiveActions, negativeActions } = categorizeActions();
-            let positiveCount = 0;
-            let negativeCount = 0;
-            
-            data.forEach(d => {
-                if (positiveActions.includes(d.Action)) {
-                    positiveCount++;
-                } else if (negativeActions.includes(d.Action)) {
-                    negativeCount++;
-                }
-            });
-            
-            return { positiveCount, negativeCount };
-        }
-       /* function updateStats() {
-            const totalActions = filteredData.length;
-            const totalPoints = filteredData.filter(d => 
-                d.Action === '2 Points' || d.Action === '3 Points'
-            ).reduce((sum, d) => sum + parseInt(d.Action.split(' ')[0]), 0);
-            
-            const activePlayers = new Set(filteredData.map(d => d.Joueur)).size;
-            const matches = new Set(filteredData.map(d => `${d.Date}-${d.Adversaire}`)).size;
-
-            document.getElementById('totalActions').textContent = totalActions;
-            document.getElementById('totalPoints').textContent = totalPoints;
-            document.getElementById('activePlayersCount').textContent = activePlayers;
-            document.getElementById('matchesCount').textContent = matches;
-        }*/
-		
-		function updateStats() {
-			const totalActions = filteredData.length;
-			const totalPoints = filteredData.filter(d => 
-				d.Action === '2 Points' || d.Action === '3 Points'
-			).reduce((sum, d) => sum + parseInt(d.Action.split(' ')[0]), 0);
-			
-			// Calculer les actions par catégories
-			const { positiveCount, negativeCount } = calculateCategorizedStats(filteredData);
-			
-			const activePlayers = new Set(filteredData.map(d => d.Joueur)).size;
-			const matches = new Set(filteredData.map(d => `${d.Date}-${d.Adversaire}`)).size;
-
-			document.getElementById('totalActions').textContent = totalActions;
-			document.getElementById('totalPoints').textContent = totalPoints;
-			document.getElementById('positiveActions').textContent = positiveCount;
-			document.getElementById('negativeActions').textContent = negativeCount;
-			document.getElementById('activePlayersCount').textContent = activePlayers;
-			document.getElementById('matchesCount').textContent = matches;
-		}
-
-        // Mettre à jour les graphiques
-        function updateCharts() {
-            updatePlayersChart();
-            updateQuartersChart();
-            updateActionsChart();
-            updateTimelineChart();
-            updatePerformanceRankingChart();
-            updateBalanceChart();
-        }
-
-        function updatePlayersChart() {
-            const { positiveActions, negativeActions } = categorizeActions();
-            const playerStats = {};
-            
-            // Initialiser les stats des joueurs
-            const players = [...new Set(filteredData.map(d => d.Joueur))];
-            players.forEach(player => {
-                playerStats[player] = { positive: 0, negative: 0 };
-            });
-            
-            // Compter les actions par catégorie pour chaque joueur
+            // Compter les actions normales
             filteredData.forEach(d => {
-                if (positiveActions.includes(d.Action)) {
-                    playerStats[d.Joueur].positive++;
-                } else if (negativeActions.includes(d.Action)) {
-                    playerStats[d.Joueur].negative++;
+                const quarter = d['Période'];
+                const action = d.Action;
+                if (dataByQuarter[quarter] && dataByQuarter[quarter][action] !== undefined) {
+                    dataByQuarter[quarter][action]++;
                 }
             });
 
-            const ctx = document.getElementById('playersChart').getContext('2d');
-            if (charts.players) charts.players.destroy();
-            
-            // Calculer l'échelle maximale dynamiquement
-            const allValues = Object.values(playerStats).flatMap(stats => [stats.positive, stats.negative]);
-            const maxValue = Math.max(...allValues, 5);
-            const scaledMax = Math.ceil(maxValue * 1.1);
-            
-            charts.players = new Chart(ctx, {
+            // Ajouter les règles métier détectées par période
+            ruleMatches.forEach(match => {
+                const quarter = match.quarter;
+                const ruleAction = `[RÈGLE] ${match.ruleName}`;
+
+                if (!dataByQuarter[quarter]) {
+                    dataByQuarter[quarter] = {};
+                    actionTypes.forEach(action => {
+                        dataByQuarter[quarter][action] = 0;
+                    });
+                }
+
+                if (dataByQuarter[quarter][ruleAction] !== undefined) {
+                    dataByQuarter[quarter][ruleAction]++;
+                }
+            });
+
+            const colors = [
+                '#3498db', '#2ecc71', '#e74c3c', '#f39c12', '#9b59b6',
+                '#1abc9c', '#34495e', '#e67e22', '#95a5a6', '#d35400'
+            ];
+
+            const datasets = actionTypes.map((action, idx) => {
+                // Couleur spéciale pour les règles métier
+                const isRule = action.startsWith('[RÈGLE]');
+                const ruleColor = isRule ? '#8b5cf6' : colors[idx % colors.length]; // Violet pour les règles
+
+                return {
+                    label: action,
+                    data: quarters.map(q => dataByQuarter[q][action] || 0),
+                    backgroundColor: ruleColor,
+                    borderColor: ruleColor,
+                    borderWidth: isRule ? 3 : 1 // Bordure plus épaisse pour les règles
+                };
+            });
+
+            const ctx = document.getElementById('actionsByQuarterChart').getContext('2d');
+            if (charts.actionsByQuarterChart) charts.actionsByQuarterChart.destroy();
+
+            charts.actionsByQuarterChart = new Chart(ctx, {
                 type: 'bar',
                 data: {
-                    labels: Object.keys(playerStats),
-                    datasets: [{
-                        label: 'Actions Positives',
-                        data: Object.values(playerStats).map(stats => stats.positive),
-                        backgroundColor: '#2c5aa0',
-                        borderColor: '#1e3a8a',
-                        borderWidth: 2
-                    }, {
-                        label: 'Actions Négatives',
-                        data: Object.values(playerStats).map(stats => stats.negative),
-                        backgroundColor: '#dc2626',
-                        borderColor: '#991b1b',
-                        borderWidth: 2
-                    }]
+                    labels: quarters,
+                    datasets: datasets
                 },
                 options: {
                     responsive: true,
                     maintainAspectRatio: false,
                     plugins: {
-                        legend: { 
-                            display: true,
-                            position: 'top'
+                        legend: {
+                            position: 'right',
+                            labels: {
+                                boxWidth: 12,
+                                font: {
+                                    size: 10
+                                }
+                            }
                         }
                     },
                     scales: {
-                        y: {
-                            beginAtZero: true,
-                            max: scaledMax
-                        },
                         x: {
-                            ticks: {
-                                maxRotation: 45
+                            stacked: true,
+                            title: {
+                                display: true,
+                                text: 'Période'
+                            }
+                        },
+                        y: {
+                            stacked: true,
+                            beginAtZero: true,
+                            title: {
+                                display: true,
+                                text: 'Nombre d\'actions'
                             }
                         }
                     }
@@ -1425,265 +2612,140 @@
             });
         }
 
-		function updateQuartersChart() {
-			const { positiveActions, negativeActions } = categorizeActions();
-			const quarterStats = {};
-			
-			// Initialiser les stats pour chaque quart-temps
-			const quarters = [...new Set(filteredData.map(d => d['Quart-temps']))].sort();
-			quarters.forEach(quarter => {
-				quarterStats[quarter] = { positive: 0, negative: 0 };
-			});
-			
-			// Compter les actions par catégorie pour chaque quart-temps
-			filteredData.forEach(d => {
-				const quarter = d['Quart-temps'];
-				if (positiveActions.includes(d.Action)) {
-					quarterStats[quarter].positive++;
-				} else if (negativeActions.includes(d.Action)) {
-					quarterStats[quarter].negative++;
-				}
-			});
+        function updateActionsByMatchChart() {
+            const allActions = [...new Set(filteredData.map(d => d.Action))].sort();
 
-			const ctx = document.getElementById('quartersChart').getContext('2d');
-			if (charts.quarters) charts.quarters.destroy();
-			
-			// Calculer l'échelle maximale dynamiquement
-			const allValues = Object.values(quarterStats).flatMap(stats => [stats.positive, stats.negative]);
-			const maxValue = Math.max(...allValues, 5);
-			const scaledMax = Math.ceil(maxValue * 1.1);
-			
-			charts.quarters = new Chart(ctx, {
-				type: 'bar',
-				data: {
-					labels: Object.keys(quarterStats),
-					datasets: [{
-						label: 'Actions Positives',
-						data: Object.values(quarterStats).map(stats => stats.positive),
-						backgroundColor: '#2c5aa0',
-						borderColor: '#1e3a8a',
-						borderWidth: 2
-					}, {
-						label: 'Actions Négatives',
-						data: Object.values(quarterStats).map(stats => stats.negative),
-						backgroundColor: '#dc2626',
-						borderColor: '#991b1b',
-						borderWidth: 2
-					}]
-				},
-				options: {
-					responsive: true,
-					maintainAspectRatio: false,
-					plugins: {
-						legend: { 
-							display: true,
-							position: 'top'
-						},
-						tooltip: {
-							callbacks: {
-								label: function(context) {
-									const quarter = context.label;
-									const stats = quarterStats[quarter];
-									const datasetLabel = context.dataset.label;
-									const value = context.parsed.y;
-									const total = stats.positive + stats.negative;
-									const percentage = total > 0 ? ((value * 100) / total).toFixed(1) : '0.0';
-									return `${datasetLabel}: ${value} (${percentage}%)`;
-								}
-							}
-						}
-					},
-					scales: {
-						y: {
-							beginAtZero: true,
-							max: scaledMax,
-							title: {
-								display: true,
-								text: 'Nombre d\'actions'
-							}
-						},
-						x: {
-							title: {
-								display: true,
-								text: 'Quart-temps'
-							}
-						}
-					}
-				}
-			});
-		}
+            // Ajouter les règles métier comme types d'actions
+            const ruleActions = businessRules
+                .filter(r => ruleMatches.some(m => m.ruleId === r.id))
+                .map(r => `[RÈGLE] ${r.name}`);
 
+            const actionTypes = [...allActions, ...ruleActions];
+            const matches = [...new Set(filteredData.map(d => `${d.Date} vs ${d.Adversaire}`))].sort();
 
-        function updateActionsChart() {
-            const actionStats = {};
-            filteredData.forEach(d => {
-                if (!actionStats[d.Action]) {
-                    actionStats[d.Action] = 0;
-                }
-                actionStats[d.Action]++;
+            const dataByMatch = {};
+            matches.forEach(match => {
+                dataByMatch[match] = {};
+                actionTypes.forEach(action => {
+                    dataByMatch[match][action] = 0;
+                });
             });
 
-            const ctx = document.getElementById('actionsChart').getContext('2d');
-            if (charts.actions) charts.actions.destroy();
-            
+            // Compter les actions normales
+            filteredData.forEach(d => {
+                const matchKey = `${d.Date} vs ${d.Adversaire}`;
+                const action = d.Action;
+                if (dataByMatch[matchKey] && dataByMatch[matchKey][action] !== undefined) {
+                    dataByMatch[matchKey][action]++;
+                }
+            });
+
+            // Ajouter les règles métier détectées par match
+            ruleMatches.forEach(match => {
+                const matchKey = `${match.date} vs ${match.adversaire}`;
+                const ruleAction = `[RÈGLE] ${match.ruleName}`;
+
+                if (!dataByMatch[matchKey]) {
+                    dataByMatch[matchKey] = {};
+                    actionTypes.forEach(action => {
+                        dataByMatch[matchKey][action] = 0;
+                    });
+                }
+
+                if (dataByMatch[matchKey][ruleAction] !== undefined) {
+                    dataByMatch[matchKey][ruleAction]++;
+                }
+            });
+
             const colors = [
-                'rgba(52, 152, 219, 0.8)',
-                'rgba(46, 204, 113, 0.8)',
-                'rgba(231, 76, 60, 0.8)',
-                'rgba(241, 196, 15, 0.8)',
-                'rgba(155, 89, 182, 0.8)',
-                'rgba(230, 126, 34, 0.8)',
-                'rgba(26, 188, 156, 0.8)'
+                '#3498db', '#2ecc71', '#e74c3c', '#f39c12', '#9b59b6',
+                '#1abc9c', '#34495e', '#e67e22', '#95a5a6', '#d35400'
             ];
-            
-            charts.actions = new Chart(ctx, {
-                type: 'pie',
+
+            const datasets = actionTypes.map((action, idx) => {
+                // Couleur spéciale pour les règles métier
+                const isRule = action.startsWith('[RÈGLE]');
+                const ruleColor = isRule ? '#8b5cf6' : colors[idx % colors.length]; // Violet pour les règles
+
+                return {
+                    label: action,
+                    data: matches.map(match => dataByMatch[match][action] || 0),
+                    backgroundColor: ruleColor,
+                    borderColor: ruleColor,
+                    borderWidth: isRule ? 3 : 1 // Bordure plus épaisse pour les règles
+                };
+            });
+
+            const ctx = document.getElementById('actionsByMatchChart').getContext('2d');
+            if (charts.actionsByMatchChart) charts.actionsByMatchChart.destroy();
+
+            charts.actionsByMatchChart = new Chart(ctx, {
+                type: 'bar',
                 data: {
-                    labels: Object.keys(actionStats),
-                    datasets: [{
-                        data: Object.values(actionStats),
-                        backgroundColor: colors.slice(0, Object.keys(actionStats).length),
-                        borderColor: colors.slice(0, Object.keys(actionStats).length).map(c => c.replace('0.8', '1')),
-                        borderWidth: 2
-                    }]
+                    labels: matches,
+                    datasets: datasets
                 },
                 options: {
                     responsive: true,
                     maintainAspectRatio: false,
                     plugins: {
                         legend: {
-                            position: 'right'
-                        }
-                    }
-                }
-            });
-        }
-
-        function updateTimelineChart() {
-            const { positiveActions, negativeActions } = categorizeActions();
-            const matchStats = {};
-            
-            // Grouper par match et compter les actions positives/négatives
-            filteredData.forEach(d => {
-                const matchKey = `${d.Date} vs ${d.Adversaire}`;
-                if (!matchStats[matchKey]) {
-                    matchStats[matchKey] = { positive: 0, negative: 0 };
-                }
-                
-                if (positiveActions.includes(d.Action)) {
-                    matchStats[matchKey].positive++;
-                } else if (negativeActions.includes(d.Action)) {
-                    matchStats[matchKey].negative++;
-                }
-            });
-
-            const ctx = document.getElementById('timelineChart').getContext('2d');
-            if (charts.timeline) charts.timeline.destroy();
-            
-            // Calculer l'échelle maximale dynamiquement
-            const allValues = Object.values(matchStats).flatMap(stats => [stats.positive, stats.negative]);
-            const maxValue = Math.max(...allValues, 5);
-            const scaledMax = Math.ceil(maxValue * 1.2);
-            
-            const matchLabels = Object.keys(matchStats);
-            
-            charts.timeline = new Chart(ctx, {
-                type: 'line',
-                data: {
-                    labels: matchLabels,
-                    datasets: [{
-                        label: 'Actions Positives',
-                        data: Object.values(matchStats).map(stats => stats.positive),
-                        backgroundColor: 'rgba(44, 90, 160, 0.2)',
-                        borderColor: '#2c5aa0',
-                        borderWidth: 3,
-                        fill: false,
-                        tension: 0.4,
-                        pointBackgroundColor: '#2c5aa0',
-                        pointBorderColor: '#fff',
-                        pointBorderWidth: 2,
-                        pointRadius: 6
-                    }, {
-                        label: 'Actions Négatives',
-                        data: Object.values(matchStats).map(stats => stats.negative),
-                        backgroundColor: 'rgba(220, 38, 38, 0.2)',
-                        borderColor: '#dc2626',
-                        borderWidth: 3,
-                        fill: false,
-                        tension: 0.4,
-                        pointBackgroundColor: '#dc2626',
-                        pointBorderColor: '#fff',
-                        pointBorderWidth: 2,
-                        pointRadius: 6
-                    }]
-                },
-                options: {
-                    responsive: true,
-                    maintainAspectRatio: false,
-                    plugins: {
-                        legend: { 
-                            display: true,
-                            position: 'top'
+                            position: 'right',
+                            labels: {
+                                boxWidth: 12,
+                                font: {
+                                    size: 10
+                                }
+                            }
                         }
                     },
                     scales: {
-                        y: {
-                            beginAtZero: true,
-                            max: scaledMax
-                        },
                         x: {
-                            ticks: { maxRotation: 45 }
+                            stacked: true,
+                            ticks: {
+                                maxRotation: 45,
+                                minRotation: 45
+                            },
+                            title: {
+                                display: true,
+                                text: 'Match'
+                            }
+                        },
+                        y: {
+                            stacked: true,
+                            beginAtZero: true,
+                            title: {
+                                display: true,
+                                text: 'Nombre d\'actions'
+                            }
                         }
                     }
                 }
             });
         }
 
-        // Mettre à jour la grille des joueurs
         function updatePlayersGrid() {
             const playersContainer = document.getElementById('playersGrid');
             const playerStats = {};
 
-            // Calculer les statistiques par joueur
+            // Calculer les stats de manière dynamique
             filteredData.forEach(d => {
                 if (!playerStats[d.Joueur]) {
                     playerStats[d.Joueur] = {
                         numero: d.Numéro,
                         totalActions: 0,
-                        points: 0,
-                        passes: 0,
-                        rebonds: 0,
-                        fautes: 0,
-                        interceptions: 0,
-                        pertes: 0
+                        actions: {} // Compteur pour chaque action
                     };
                 }
-                
+
                 playerStats[d.Joueur].totalActions++;
-                
-                switch(d.Action) {
-                    case '2 Points':
-                        playerStats[d.Joueur].points += 2;
-                        break;
-                    case '3 Points':
-                        playerStats[d.Joueur].points += 3;
-                        break;
-                    case 'Passes décisive':
-                        playerStats[d.Joueur].passes++;
-                        break;
-                    case 'Rebond':
-                        playerStats[d.Joueur].rebonds++;
-                        break;
-                    case 'Fautes':
-                        playerStats[d.Joueur].fautes++;
-                        break;
-                    case 'Interceptions':
-                        playerStats[d.Joueur].interceptions++;
-                        break;
-                    case 'Perte de balle':
-                        playerStats[d.Joueur].pertes++;
-                        break;
+
+                // Compter chaque action dynamiquement
+                const action = d.Action;
+                if (!playerStats[d.Joueur].actions[action]) {
+                    playerStats[d.Joueur].actions[action] = 0;
                 }
+                playerStats[d.Joueur].actions[action]++;
             });
 
             if (Object.keys(playerStats).length === 0) {
@@ -1691,64 +2753,89 @@
                 return;
             }
 
-            // Trier par total d'actions
             const sortedPlayers = Object.entries(playerStats)
                 .sort((a, b) => b[1].totalActions - a[1].totalActions);
 
-            playersContainer.innerHTML = sortedPlayers.map(([player, stats]) => `
-                <div class="player-card">
-                    <div class="player-header">
-                        <div class="player-name">${player}</div>
-                        <div class="player-number">#${stats.numero}</div>
-                    </div>
-                    <div class="player-stats">
+            playersContainer.innerHTML = sortedPlayers.map(([player, stats]) => {
+                // Construire dynamiquement les stats visibles en fonction de selectedStats
+                const statsHtml = selectedStats.map(action => {
+                    const count = stats.actions[action] || 0;
+                    return `
                         <div class="player-stat">
-                            <div class="player-stat-value">${stats.points}</div>
-                            <div class="player-stat-label">Points</div>
+                            <div class="player-stat-value">${count}</div>
+                            <div class="player-stat-label">${action}</div>
                         </div>
-                        <div class="player-stat">
-                            <div class="player-stat-value">${stats.passes}</div>
-                            <div class="player-stat-label">Passes</div>
+                    `;
+                }).join('');
+
+                return `
+                    <div class="player-card">
+                        <div class="player-header">
+                            <div class="player-name">${player}</div>
+                            <div class="player-number">#${stats.numero}</div>
                         </div>
-                        <div class="player-stat">
-                            <div class="player-stat-value">${stats.rebonds}</div>
-                            <div class="player-stat-label">Rebonds</div>
-                        </div>
-                        <div class="player-stat">
-                            <div class="player-stat-value">${stats.interceptions}</div>
-                            <div class="player-stat-label">Intercep.</div>
-                        </div>
-                        <div class="player-stat">
-                            <div class="player-stat-value">${stats.fautes}</div>
-                            <div class="player-stat-label">Fautes</div>
-                        </div>
-                        <div class="player-stat">
-                            <div class="player-stat-value">${stats.pertes}</div>
-                            <div class="player-stat-label">Pertes</div>
+                        <div class="player-stats">
+                            ${statsHtml}
                         </div>
                     </div>
-                </div>
-            `).join('');
+                `;
+            }).join('');
         }
 
-        // Fonction utilitaire pour calculer l'efficacité
-        function calculateEfficiency(player) {
-            const positiveActions = player.points + player.passes + player.rebonds + player.interceptions;
-            const negativeActions = player.fautes + player.pertes;
-            return Math.max(0, positiveActions - negativeActions);
+        function populateStatsFilters() {
+            // Extraire toutes les actions uniques du dataset
+            const uniqueActions = [...new Set(basketballData.map(d => d.Action))].sort();
+
+            // Initialiser selectedStats avec toutes les actions
+            selectedStats = [...uniqueActions];
+
+            // Générer les boutons
+            const container = document.getElementById('statsFilterContainer');
+            container.innerHTML = uniqueActions.map(action => {
+                // Échapper les guillemets pour éviter les problèmes JavaScript
+                const escapedAction = action.replace(/'/g, "\\'");
+                return `
+                    <button class="stat-filter-btn active" data-stat="${action}" onclick="toggleStatFilterByButton(this)">
+                        ${action}
+                    </button>
+                `;
+            }).join('');
         }
 
-        // Fonction d'export des données filtrées
+        function toggleStatFilterByButton(btn) {
+            const stat = btn.getAttribute('data-stat');
+            toggleStatFilter(stat, btn);
+        }
+
+        function toggleStatFilter(stat, btn) {
+            if (!btn) {
+                btn = document.querySelector(`[data-stat="${stat}"]`);
+            }
+
+            if (selectedStats.includes(stat)) {
+                // Retirer la stat
+                selectedStats = selectedStats.filter(s => s !== stat);
+                btn.classList.remove('active');
+            } else {
+                // Ajouter la stat
+                selectedStats.push(stat);
+                btn.classList.add('active');
+            }
+
+            // Rafraîchir l'affichage des joueurs
+            updatePlayersGrid();
+        }
+
         function exportFilteredData() {
             if (filteredData.length === 0) {
                 alert('Aucune donnée à exporter avec les filtres actuels.');
                 return;
             }
 
-            const csvContent = "data:text/csv;charset=utf-8," 
-                + "Date,Adversaire,Joueur,Numéro,Quart-temps,Temps,Action\n"
-                + filteredData.map(row => 
-                    `${row.Date},${row.Adversaire},${row.Joueur},${row.Numéro},${row['Quart-temps']},${row.Temps},${row.Action}`
+            const csvContent = "data:text/csv;charset=utf-8,"
+                + "Date,Adversaire,Joueur,Numéro,Période,Temps,Action\n"
+                + filteredData.map(row =>
+                    `${row.Date},${row.Adversaire},${row.Joueur},${row.Numéro},${row['Période']},${row.Temps},${row.Action}`
                 ).join("\n");
 
             const encodedUri = encodeURI(csvContent);
@@ -1759,221 +2846,6 @@
             link.click();
             document.body.removeChild(link);
         }
-
-        // Ajouter le bouton d'export
-        function addExportButton() {
-            const filtersSection = document.querySelector('.filters-section');
-            const exportButton = document.createElement('button');
-            exportButton.className = 'reset-filters';
-            exportButton.style.marginLeft = '10px';
-			exportButton.style.padding = '10px';
-			exportButton.style.borderRadius = '5px';
-            exportButton.style.background = '#2ecc71';
-            exportButton.innerHTML = '📊 Exporter les données filtrées';
-            exportButton.onclick = exportFilteredData;
-            
-            const resetButton = filtersSection.querySelector('.reset-filters');
-            resetButton.parentNode.insertBefore(exportButton, resetButton.nextSibling);
-        }
-
-        // Fonction pour générer un rapport détaillé
-        function generateReport() {
-            const report = {
-                dateGeneration: new Date().toLocaleDateString('fr-FR'),
-                filtresActifs: {
-                    date: document.getElementById('dateFilter').value || 'Toutes',
-                    adversaire: document.getElementById('adversaireFilter').value || 'Tous',
-                    quartTemps: document.getElementById('quartFilter').value || 'Tous'
-                },
-                statistiquesGenerales: {
-                    totalActions: filteredData.length,
-                    totalPoints: filteredData.filter(d => 
-                        d.Action === '2 Points' || d.Action === '3 Points'
-                    ).reduce((sum, d) => sum + parseInt(d.Action.split(' ')[0]), 0),
-                    joueursPlusActifs: Object.entries(
-                        filteredData.reduce((acc, d) => {
-                            acc[d.Joueur] = (acc[d.Joueur] || 0) + 1;
-                            return acc;
-                        }, {})
-                    ).sort((a, b) => b[1] - a[1]).slice(0, 5)
-                }
-            };
-
-            console.log('📋 Rapport généré:', report);
-            return report;
-        }
-
-        // Initialisation complète au chargement
-        document.addEventListener('DOMContentLoaded', function() {
-            setTimeout(() => {
-                addExportButton();
-            }, 100);
-        });
-
-        // Fonctions d'analyse avancée
-        function analyzePlayerPerformance(playerName) {
-            const playerData = filteredData.filter(d => d.Joueur === playerName);
-            
-            return {
-                totalActions: playerData.length,
-                actionsByQuarter: playerData.reduce((acc, d) => {
-                    acc[d['Quart-temps']] = (acc[d['Quart-temps']] || 0) + 1;
-                    return acc;
-                }, {}),
-                actionsByType: playerData.reduce((acc, d) => {
-                    acc[d.Action] = (acc[d.Action] || 0) + 1;
-                    return acc;
-                }, {}),
-                efficiency: calculatePlayerEfficiency(playerData)
-            };
-        }
-
-        function calculatePlayerEfficiency(playerData) {
-            let points = 0;
-            let positiveActions = 0;
-            let negativeActions = 0;
-
-            playerData.forEach(d => {
-                switch(d.Action) {
-                    case '2 Points':
-                        points += 2;
-                        positiveActions++;
-                        break;
-                    case '3 Points':
-                        points += 3;
-                        positiveActions++;
-                        break;
-                    case 'Passes décisive':
-                    case 'Rebond':
-                    case 'Interceptions':
-                        positiveActions++;
-                        break;
-                    case 'Fautes':
-                    case 'Perte de balle':
-                        negativeActions++;
-                        break;
-                }
-            });
-
-            return {
-                points,
-                positiveActions,
-                negativeActions,
-                ratio: negativeActions > 0 ? (positiveActions / negativeActions).toFixed(2) : positiveActions
-            };
-        }
-
-        // Fonction de recherche rapide
-        function quickSearch(query) {
-            if (!query) return;
-            
-            const searchResults = basketballData.filter(d => 
-                d.Joueur.toLowerCase().includes(query.toLowerCase()) ||
-                d.Adversaire.toLowerCase().includes(query.toLowerCase()) ||
-                d.Action.toLowerCase().includes(query.toLowerCase())
-            );
-            
-            filteredData = searchResults;
-            updateDashboard();
-        }
-
-        // Auto-refresh des données (simulation)
-        function enableAutoRefresh() {
-            setInterval(() => {
-                // Ici vous pourriez recharger les données depuis un serveur
-                console.log('🔄 Vérification de nouvelles données...');
-            }, 30000); // Toutes les 30 secondes
-        }
-
-        // Comparaisons entre matchs
-        function compareMatches() {
-            const matches = [...new Set(filteredData.map(d => `${d.Date}-${d.Adversaire}`))];
-            
-            if (matches.length < 2) {
-                alert('Il faut au moins 2 matchs pour effectuer une comparaison.');
-                return;
-            }
-
-            const comparison = matches.map(match => {
-                const [date, adversaire] = match.split('-');
-                const matchData = filteredData.filter(d => d.Date === date && d.Adversaire === adversaire);
-                
-                return {
-                    match: `${date} vs ${adversaire}`,
-                    totalActions: matchData.length,
-                    points: matchData.filter(d => d.Action.includes('Points'))
-                        .reduce((sum, d) => sum + parseInt(d.Action.split(' ')[0]), 0),
-                    joueursPlusActifs: matchData.reduce((acc, d) => {
-                        acc[d.Joueur] = (acc[d.Joueur] || 0) + 1;
-                        return acc;
-                    }, {})
-                };
-            });
-
-            console.log('📊 Comparaison des matchs:', comparison);
-            return comparison;
-        }
-
-        // Prédictions simples basées sur les tendances
-        function predictNextGamePerformance() {
-            if (filteredData.length === 0) return null;
-
-            const playerAverages = {};
-            const players = [...new Set(filteredData.map(d => d.Joueur))];
-            
-            players.forEach(player => {
-                const playerData = filteredData.filter(d => d.Joueur === player);
-                const matches = [...new Set(playerData.map(d => `${d.Date}-${d.Adversaire}`))];
-                
-                playerAverages[player] = {
-                    avgActionsPerGame: (playerData.length / matches.length).toFixed(1),
-                    avgPointsPerGame: (playerData.filter(d => d.Action.includes('Points'))
-                        .reduce((sum, d) => sum + parseInt(d.Action.split(' ')[0]), 0) / matches.length).toFixed(1)
-                };
-            });
-
-            return playerAverages;
-        }
-
-        // Alertes de performance
-        function checkPerformanceAlerts() {
-            const alerts = [];
-            const playerStats = {};
-
-            filteredData.forEach(d => {
-                if (!playerStats[d.Joueur]) {
-                    playerStats[d.Joueur] = { fautes: 0, pertes: 0, total: 0 };
-                }
-                playerStats[d.Joueur].total++;
-                if (d.Action === 'Fautes') playerStats[d.Joueur].fautes++;
-                if (d.Action === 'Perte de balle') playerStats[d.Joueur].pertes++;
-            });
-
-            Object.entries(playerStats).forEach(([player, stats]) => {
-                const faultsRatio = stats.fautes / stats.total;
-                const turnoversRatio = stats.pertes / stats.total;
-                
-                if (faultsRatio > 0.3) {
-                    alerts.push(`⚠️ ${player}: Taux de fautes élevé (${(faultsRatio * 100).toFixed(1)}%)`);
-                }
-                
-                if (turnoversRatio > 0.2) {
-                    alerts.push(`🔄 ${player}: Nombreuses pertes de balle (${(turnoversRatio * 100).toFixed(1)}%)`);
-                }
-            });
-
-            if (alerts.length > 0) {
-                console.warn('🚨 Alertes de performance:', alerts);
-            }
-            
-            return alerts;
-        }
-
-        // Activation des fonctionnalités avancées
-        setTimeout(() => {
-            enableAutoRefresh();
-            checkPerformanceAlerts();
-        }, 2000);
     </script>
 </body>
 </html>
