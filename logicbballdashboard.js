@@ -308,6 +308,21 @@
                         handleDataSourceChange();
                         loadFromGoogleSheet();
                     }
+                } else {
+                    // Aucune configuration sauvegardée, utiliser la configuration par défaut
+                    console.log('📋 Utilisation de la configuration par défaut');
+
+                    // Sauvegarder la configuration par défaut
+                    saveDataSourceConfig();
+
+                    // Restaurer l'UI avec les valeurs par défaut
+                    document.getElementById('dataSourceSelect').value = dataSourceConfig.type;
+
+                    if (dataSourceConfig.type === 'googleDrive' && dataSourceConfig.googleSheetUrl) {
+                        document.getElementById('googleSheetUrl').value = dataSourceConfig.googleSheetUrl;
+                        handleDataSourceChange();
+                        loadFromGoogleSheet();
+                    }
                 }
             } catch (e) {
                 console.warn('Erreur chargement config:', e);
