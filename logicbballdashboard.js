@@ -9,9 +9,57 @@
         let customNegativeActions = [];
         let selectedStats = []; // Sera rempli dynamiquement avec les actions du CSV
 
-		let businessRules = [];
+		let businessRules = [
+			{
+				"id": "rule_1",
+				"name": "Possession",
+				"sequence": [
+					{
+						"type": "group",
+						"items": [
+							"Interceptions",
+							"Passes décisive",
+							"Rebond def.",
+							"Rebond off."
+						],
+						"operator": "OU"
+					}
+				],
+				"tolerance": 0,
+				"isPositive": true,
+				"isActive": true,
+				"color": "#2c5aa0"
+			},
+			{
+				"id": "rule_3",
+				"name": "Rebond + 2 points",
+				"sequence": [
+					{
+						"type": "group",
+						"items": [
+							"Rebond off.",
+							"2 Points"
+						],
+						"operator": "ET"
+					},
+					"OU",
+					{
+						"type": "group",
+						"items": [
+							"Rebond def.",
+							"2 Points"
+						],
+						"operator": "ET"
+					}
+				],
+				"tolerance": 1,
+				"isPositive": true,
+				"isActive": true,
+				"color": "#dc2626"
+			}
+		];
 		let ruleMatches = [];
-		let nextRuleId = 1;
+		let nextRuleId = 4;
 		let tempRuleGroups = []; // Structure: [{type: "group", items: [], operator: "ET"}, "ET", {...}]
 		let currentGroupIndex = 0;
 		let usedColors = new Set();
@@ -30,10 +78,10 @@
 
         // Configuration de connexion aux données
         let dataSourceConfig = {
-            type: 'none', // 'none', 'local', 'googleDrive'
+            type: 'googleDrive', // 'none', 'local', 'googleDrive'
             localFilePath: '',
             localFileData: null,
-            googleSheetUrl: ''
+            googleSheetUrl: 'https://docs.google.com/spreadsheets/d/e/2PACX-1vQHmdXQBbJFeDi2F-PJ7um5CagqGZulbsdabDzhd6mVJpzzeVSnEJzs6ytcVNu0fiFfdzoDBNUf2TfV/pub?gid=2139680927&single=true&output=csv'
         };
 
         // ============================================
@@ -1120,6 +1168,10 @@
         // ============================================
 
         window.onload = function() {
+            // Initialiser les couleurs utilisées par les règles par défaut
+            usedColors.add('#2c5aa0');
+            usedColors.add('#dc2626');
+
             initializeEmptyDashboard();
             loadDataSourceConfig();
         };
@@ -1261,6 +1313,11 @@
 			initializeRuleActionsSelector();
 			initializeRuleGroups();
             populateStatsFilters();
+
+            // Initialiser les règles métier au chargement
+            updateRulesList();
+            updateRulesToggleBanner();
+            detectRuleMatches();
         }
 
         function initializeCategoryConfiguration() {
@@ -1283,9 +1340,9 @@
             }
 
             if (customPositiveActions.length === 0 && customNegativeActions.length === 0) {
-                customPositiveActions = ['1 Point','2 Points', '3 Points', 'Passes décisive', 'Rebond', 'Interceptions']
+                customPositiveActions = ['1 Point','2 Points', '3 Points', 'Passes décisive', 'Rebond', 'Interceptions', 'Rebond def.', 'Rebond off.']
                     .filter(action => allActions.includes(action));
-                customNegativeActions = ['Fautes', 'Perte de balle']
+                customNegativeActions = ['Fautes', 'Perte de balle', 'Panier raté']
                     .filter(action => allActions.includes(action));
             }
 
@@ -1491,9 +1548,9 @@
 
         function categorizeActions() {
             const positiveActions = customPositiveActions.length > 0 ? customPositiveActions :
-                ['1 Point', '2 Points', '3 Points', 'Passes décisive', 'Rebond', 'Interceptions'];
+                ['1 Point', '2 Points', '3 Points', 'Passes décisive', 'Rebond', 'Interceptions', 'Rebond def.', 'Rebond off.'];
             const negativeActions = customNegativeActions.length > 0 ? customNegativeActions :
-                ['Fautes', 'Perte de balle'];
+                ['Fautes', 'Perte de balle', 'Panier raté'];
 
             return { positiveActions, negativeActions };
         }
