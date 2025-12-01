@@ -1356,7 +1356,7 @@
             if (customPositiveActions.length === 0 && customNegativeActions.length === 0) {
                 customPositiveActions = ['1 Point','2 Points', '3 Points', 'Passes décisive', 'Rebond', 'Interceptions', 'Rebond def.', 'Rebond off.']
                     .filter(action => allActions.includes(action));
-                customNegativeActions = ['Fautes', 'Perte de balle', 'Panier raté']
+                customNegativeActions = ['Fautes', 'Perte de balle', 'Panier raté','1 Point raté','2 Points raté','3 Points raté']
                     .filter(action => allActions.includes(action));
             }
 
@@ -1564,7 +1564,7 @@
             const positiveActions = customPositiveActions.length > 0 ? customPositiveActions :
                 ['1 Point', '2 Points', '3 Points', 'Passes décisive', 'Rebond', 'Interceptions', 'Rebond def.', 'Rebond off.'];
             const negativeActions = customNegativeActions.length > 0 ? customNegativeActions :
-                ['Fautes', 'Perte de balle', 'Panier raté'];
+                ['Fautes', 'Perte de balle', 'Panier raté','1 Point raté','2 Points raté','3 Points raté'];
 
             return { positiveActions, negativeActions };
         }
